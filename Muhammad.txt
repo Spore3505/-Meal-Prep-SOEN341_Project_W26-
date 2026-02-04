@@ -1,0 +1,3 @@
+Username: Muhammad
+Allergies: dairy, egg
+Preferences: beef, halal
