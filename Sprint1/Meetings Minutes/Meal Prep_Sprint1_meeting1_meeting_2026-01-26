@@ -13,8 +13,8 @@ Meeting Goals/ Objectives:
 
 
 Discussion Notes:
-mathieu :(allergies)
-expian 
+Mathieu: Add allergy and food preference options during registration (frontend only), and update backend 
+validation to enforce unique usernames and minimum username and password lengths.
 
 Action Items:
 ALL :doing front end 
