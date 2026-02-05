@@ -9,12 +9,16 @@ Mathieu Boileau (40257130)
 AiL
 
 Meeting Goals/ Objectives:
-
+Discuss task division and team collaboration
+Complete the Sprint 1 plan together
 
 
 Discussion Notes:
 Mathieu: Add allergy and food preference options during registration (frontend only), and update backend 
 validation to enforce unique usernames and minimum username and password lengths.
-
+Yalan: Responsible the CSS for the login page and the registration page.
+Ail:Responsible the CSS for the account / account managment.
+Muhammad:Responsible for the account's backend code.
+Christopher: Responsible for the basic front-end code of login, registration, and account pages.
 Action Items:
-ALL :doing front end 
+ALL :doing front end, finish sprint plan.
