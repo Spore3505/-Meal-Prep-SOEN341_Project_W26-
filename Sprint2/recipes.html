@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Recipes</title>
+
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+
+    body {
+      background-image: url('images/background.avif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #f0f8ff;
+      font-family: Georgia, serif;
+      color: #333;
+    }
+
+    header {
+      background-color: #e7b262;
+      color: white;
+      text-align: center;
+      padding: 18px 10px 10px;
+    }
+
+    header h1 {
+      width: 400px;
+      height: 120px;
+      margin: 0 auto;
+      background-image: url('images/logo.png');
+      background-size: 100px 100px;
+      background-repeat: no-repeat;
+      background-position: left center;
+      padding-left: 70px;
+      font-size: 52px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+      line-height: 120px;
+    }
+
+    nav ul { list-style: none; padding: 0; margin: 10px 0 8px; }
+    nav li { display: inline-block; margin: 0 10px; }
+    nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    nav button:hover { text-decoration: underline; color: #ffeb3b; }
+    nav button:disabled { opacity: .9; cursor: default; }
+
+    header hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.35);
+      margin: 12px auto 0;
+      width: min(900px,92%);
+    }
+
+    main {
+      text-align: center;
+      margin-top: 30px;
+      padding: 0 14px 60px;
+    }
+
+    .wrap {
+      width: min(1050px, 94vw);
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    h2 { text-align: center; margin: 0 0 18px; }
+
+    /* Top actions */
+    .topActions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .searchInput {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-family: Georgia, serif;
+      width: 260px;
+    }
+
+    .btn {
+      background-color: #e7b262;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+    .btn:hover { background-color: #ffeb3b; color: #333; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .sectionTitle {
+      margin: 26px 0 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    /* ===== Horizontal scroll row ===== */
+    .rowWrap {
+      position: relative;
+    }
+
+    .scrollRow {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(280px, 320px);
+      gap: 14px;
+
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 6px 6px 14px;
+
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+
+      /* nicer scrolling */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hide scrollbar (still scrollable) */
+    .scrollRow::-webkit-scrollbar { height: 10px; }
+    .scrollRow::-webkit-scrollbar-track { background: rgba(255,255,255,.10); border-radius: 999px; }
+    .scrollRow::-webkit-scrollbar-thumb { background: rgba(255,255,255,.35); border-radius: 999px; }
+
+    .card {
+      scroll-snap-align: start;
+
+      background-color: #ffffff0a;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+
+      /* animations */
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 380ms ease forwards;
+
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      will-change: transform;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 34px rgba(0,0,0,.22);
+    }
+
+    /* stagger effect using CSS var */
+    .card { animation-delay: calc(var(--i, 0) * 40ms); }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card h3 { margin: 0 0 6px; }
+    .meta { font-size: 14px; opacity: .95; margin-bottom: 10px; }
+    .desc { margin: 8px 0 10px; }
+    .listTitle { font-weight: bold; margin: 10px 0 6px; }
+    ul { margin: 0 0 8px 18px; padding: 0; }
+
+    .empty {
+      text-align: center;
+      padding: 18px;
+      border: 1px dashed rgba(255,255,255,.35);
+      border-radius: 14px;
+      background: rgba(255,255,255,.08);
+    }
+
+    /* Optional arrow buttons */
+    .arrowBtn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-55%);
+      z-index: 5;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(231,178,98,.85);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      box-shadow: 0 10px 20px rgba(0,0,0,.18);
+      transition: transform 160ms ease, background 160ms ease;
+      user-select: none;
+    }
+    .arrowBtn:hover { background: rgba(255,235,59,.9); color:#333; transform: translateY(-55%) scale(1.06); }
+    .arrowLeft { left: -10px; }
+    .arrowRight { right: -10px; }
+
+    /* On small screens, hide arrows (swipe is better) */
+    @media (max-width: 520px) {
+      .arrowBtn { display: none; }
+      .scrollRow { grid-auto-columns: minmax(260px, 85vw); }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>MealMajor</h1>
+
+    <nav>
+      <ul>
+        <li><button onclick="window.location.href='Home.html'">Home</button></li>
+        <li><button onclick="window.location.href='account.html'">Account</button></li>
+        <li><button onclick="window.location.href='create.html'">Create</button></li>
+        <li><button disabled>My Recipes</button></li>
+      </ul>
+    </nav>
+
+    <hr />
+  </header>
+
+  <main>
+    <div class="wrap">
+      <h2>Recipes</h2>
+
+      <div class="topActions">
+        <input id="searchInput" class="searchInput" type="text" placeholder="Search recipe by title..." />
+        <button class="btn" onclick="loadAll()">Refresh</button>
+        <button class="btn" onclick="window.location.href='create.html'">Add New Recipe</button>
+      </div>
+
+      <div class="sectionTitle">My Personal Recipes</div>
+      <div class="rowWrap">
+        <button class="arrowBtn arrowLeft" type="button" onclick="scrollRow('mine', -1)">‹</button>
+        <button class="arrowBtn arrowRight" type="button" onclick="scrollRow('mine', 1)">›</button>
+        <div id="mine" class="scrollRow"></div>
+      </div>
+
+      <div class="sectionTitle">Global Recipes</div>
+      <div class="rowWrap">
+        <button class="arrowBtn arrowLeft" type="button" onclick="scrollRow('global', -1)">‹</button>
+        <button class="arrowBtn arrowRight" type="button" onclick="scrollRow('global', 1)">›</button>
+        <div id="global" class="scrollRow"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let allMine = [];
+    let allGlobal = [];
+
+    function esc(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function fmtNumber(n) {
+      const num = Number(n);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function renderRecipeCard(r, index) {
+      const prep = fmtNumber(r.prepTime);
+      const cook = fmtNumber(r.cookTime);
+      const cost = fmtNumber(r.cost);
+
+      const ingredients = Array.isArray(r.ingredients) ? r.ingredients : [];
+      const steps = Array.isArray(r.steps) ? r.steps : [];
+
+      return `
+        <div class="card" style="--i:${index}">
+          <h3>${esc(r.title || "Untitled")}</h3>
+          <div class="meta">
+            Prep: ${prep} min · Cook: ${cook} min · Cost: $${cost.toFixed(2)}
+          </div>
+          ${r.description ? `<div class="desc">${esc(r.description)}</div>` : ""}
+
+          <div class="listTitle">Ingredients</div>
+          ${
+            ingredients.length
+              ? `<ul>${ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`
+              : `<div class="meta">No ingredients listed.</div>`
+          }
+
+          <div class="listTitle">Steps</div>
+          ${
+            steps.length
+              ? `<ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul>`
+              : `<div class="meta">No steps listed.</div>`
+          }
+        </div>
+      `;
+    }
+
+    function renderSection(containerId, recipes) {
+      const el = document.getElementById(containerId);
+
+      if (!recipes || !recipes.length) {
+        el.innerHTML = `<div class="empty">No recipes found.</div>`;
+        return;
+      }
+
+      el.innerHTML = recipes.map((r, i) => renderRecipeCard(r, i)).join("");
+    }
+
+    function applySearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+
+      const filteredMine = allMine.filter(r =>
+        String(r.title || "").toLowerCase().includes(query)
+      );
+
+      const filteredGlobal = allGlobal.filter(r =>
+        String(r.title || "").toLowerCase().includes(query)
+      );
+
+      renderSection("mine", filteredMine);
+      renderSection("global", filteredGlobal);
+    }
+
+    async function loadAll() {
+      try {
+        const res = await fetch("/recipes/all");
+        if (!res.ok) throw new Error("Failed to load recipes");
+        const data = await res.json();
+
+        allMine = data.mine || [];
+        allGlobal = data.global || [];
+
+        // show full list first, then search applies if user typed
+        applySearch();
+      } catch (e) {
+        console.error(e);
+        alert("Could not load recipes (server error).");
+      }
+    }
+
+    function scrollRow(id, dir) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      // scroll roughly one card width
+      const card = el.querySelector(".card");
+      const step = card ? (card.getBoundingClientRect().width + 14) : 320;
+      el.scrollBy({ left: dir * step, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("searchInput").addEventListener("input", applySearch);
+      loadAll();
+    });
+  </script>
+</body>
+</html>
