@@ -403,6 +403,118 @@ app.delete("/recipes/:id", requireAuth, async (req, res) => {
   }
 });
 
+// for the open the recipe
+app.get("/recipes/:id", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const id = req.params.id;
+
+    const r = await get(
+      `SELECT id, title, description, prep_time, cook_time, cost, owner_user_id
+       FROM recipes
+       WHERE id = ?`,
+      [id]
+    );
+    if (!editId) {
+      alert("No recipe ID provided.");
+      window.location.href = "recipes.html";
+    }
+
+    if (!r) return res.status(404).send("Recipe not found");
+
+    if (r.owner_user_id !== userId)
+      return res.status(403).send("Not authorized");
+
+    const ingredients = (
+      await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [id])
+    ).map(x => x.ingredient);
+
+    const steps = (
+      await all(
+        `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+        [id]
+      )
+    ).map(x => x.step_text);
+
+    res.json({
+      id: String(r.id),
+      title: r.title,
+      description: r.description || "",
+      prepTime: r.prep_time,
+      cookTime: r.cook_time,
+      cost: r.cost,
+      ingredients,
+      steps,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading recipe");
+  }
+});
+
+// to update the recipe
+app.put("/recipes/:id", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const id = req.params.id;
+
+    const { title, description, prepTime, cookTime, cost, ingredients, steps } = req.body;
+
+    const existing = await get(
+      `SELECT owner_user_id FROM recipes WHERE id = ?`,
+      [id]
+    );
+
+    if (!existing) return res.status(404).send("Recipe not found");
+    if (existing.owner_user_id !== userId)
+      return res.status(403).send("Not authorized");
+
+    await run(
+      `UPDATE recipes
+       SET title = ?, description = ?, prep_time = ?, cook_time = ?, cost = ?
+       WHERE id = ?`,
+      [
+        String(title || "").trim(),
+        String(description || "").trim(),
+        Number(prepTime || 0),
+        Number(cookTime || 0),
+        Number(cost || 0),
+        id,
+      ]
+    );
+
+    await run(`DELETE FROM recipe_ingredients WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipe_steps WHERE recipe_id = ?`, [id]);
+
+    if (Array.isArray(ingredients)) {
+      for (const i of ingredients) {
+        const clean = String(i).trim();
+        if (clean)
+          await run(
+            `INSERT INTO recipe_ingredients (recipe_id, ingredient) VALUES (?, ?)`,
+            [id, clean]
+          );
+      }
+    }
+
+    if (Array.isArray(steps)) {
+      for (let idx = 0; idx < steps.length; idx++) {
+        const s = String(steps[idx]).trim();
+        if (s)
+          await run(
+            `INSERT INTO recipe_steps (recipe_id, step_index, step_text)
+             VALUES (?, ?, ?)`,
+            [id, idx, s]
+          );
+      }
+    }
+
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error updating recipe");
+  }
+});
 
 app.use(express.static(__dirname));
 
@@ -417,3 +529,4 @@ initDb()
     process.exit(1);
 
   });
+
