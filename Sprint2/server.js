@@ -391,6 +391,17 @@ app.post("/logout", (req, res) => {
 /* =========================
    BOOT
    ========================= */
+app.delete("/recipes/:id", requireAuth, async (req, res) => {
+  const id = req.params.id;
+  try {
+    await run(`DELETE FROM recipe_ingredients WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipe_steps WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipes WHERE id = ?`, [id]);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 
 app.use(express.static(__dirname));
@@ -404,4 +415,5 @@ initDb()
   .catch((e) => {
     console.error("DB init failed:", e);
     process.exit(1);
+
   });
