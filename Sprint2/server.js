@@ -1,8 +1,9 @@
 // server.js
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
 const session = require("express-session");
+const bcrypt = require("bcryptjs");
+const { initDb, run, get, all } = require("./db");
 
 const app = express();
 
@@ -11,15 +12,15 @@ app.use(express.json());
 // Sessions + cookies
 app.use(
   session({
-    name: "mealmj_sid", // cookie name
-    secret: "CHANGE_THIS_SECRET", // change in real use
+    name: "mealmj_sid",
+    secret: "CHANGE_THIS_SECRET",
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 2, // 2 hours
-      // secure: true, // enable only if using HTTPS
+      maxAge: 1000 * 60 * 60 * 2,
+      // secure: true,
     },
   })
 );
@@ -49,347 +50,332 @@ app.get("/account.html", requireAuth, (req, res) => {
 
 // Check login status
 app.get("/me", (req, res) => {
-  if (req.session?.user)
-    return res.json({ loggedIn: true, user: req.session.user });
+  if (req.session?.user) return res.json({ loggedIn: true, user: req.session.user });
   res.json({ loggedIn: false });
 });
 
 /* =========================
-   PROFILE ROUTES
+   PROFILE ROUTES (SQL)
    ========================= */
 
-function isBadUsername(username) {
-  return (
-    !username ||
-    username.includes("/") ||
-    username.includes("\\") ||
-    username.includes("..")
-  );
-}
-
 // Read logged-in user's allergies/preferences
-app.get("/profile", requireAuth, (req, res) => {
-  const username = req.session.user.username;
-  if (isBadUsername(username)) return res.status(400).send("Invalid username");
+app.get("/profile", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const username = req.session.user.username;
 
-  const userFilePath = path.join(__dirname, `${username}.txt`);
+    const allergies = (await all(`SELECT allergy FROM user_allergies WHERE user_id = ? ORDER BY allergy`, [userId]))
+      .map((r) => r.allergy);
 
-  fs.readFile(userFilePath, "utf8", (err, data) => {
-    if (err) {
-      if (err.code === "ENOENT") {
-        return res.json({ username, allergies: [], preferences: [] });
-      }
-      return res.status(500).send("Error reading user profile");
-    }
-
-    const lines = data.split("\n").map((l) => l.trim());
-    const allergiesLine =
-      lines.find((l) => l.startsWith("Allergies:")) || "Allergies:";
-    const prefsLine =
-      lines.find((l) => l.startsWith("Preferences:")) || "Preferences:";
-
-    const allergies = allergiesLine
-      .replace("Allergies:", "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    const preferences = prefsLine
-      .replace("Preferences:", "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const preferences = (await all(`SELECT preference FROM user_preferences WHERE user_id = ? ORDER BY preference`, [userId]))
+      .map((r) => r.preference);
 
     res.json({ username, allergies, preferences });
-  });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading user profile");
+  }
 });
 
 // Update logged-in user's allergies/preferences (overwrite)
-app.post("/profile", requireAuth, (req, res) => {
-  const username = req.session.user.username;
-  if (isBadUsername(username)) return res.status(400).send("Invalid username");
+app.post("/profile", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    let allergies = req.body.allergies || [];
+    let preferences = req.body.preferences || [];
 
-  let allergies = req.body.allergies || [];
-  let preferences = req.body.preferences || [];
+    if (!Array.isArray(allergies)) allergies = [allergies];
+    if (!Array.isArray(preferences)) preferences = [preferences];
 
-  if (!Array.isArray(allergies)) allergies = [allergies];
-  if (!Array.isArray(preferences)) preferences = [preferences];
+    allergies = allergies.map((a) => String(a).trim()).filter(Boolean);
+    preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
 
-  allergies = allergies.map((a) => String(a).trim()).filter(Boolean);
-  preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
+    await run(`DELETE FROM user_allergies WHERE user_id = ?`, [userId]);
+    await run(`DELETE FROM user_preferences WHERE user_id = ?`, [userId]);
 
-  const userFilePath = path.join(__dirname, `${username}.txt`);
+    for (const a of allergies) {
+      await run(`INSERT INTO user_allergies (user_id, allergy) VALUES (?, ?)`, [userId, a]);
+    }
+    for (const p of preferences) {
+      await run(`INSERT INTO user_preferences (user_id, preference) VALUES (?, ?)`, [userId, p]);
+    }
 
-  const fileContent =
-    `Username: ${username}\n` +
-    `Allergies: ${allergies.join(", ")}\n` +
-    `Preferences: ${preferences.join(", ")}\n`;
-
-  fs.writeFile(userFilePath, fileContent, (err) => {
-    if (err) return res.status(500).send("Error saving profile");
     res.send("Profile updated");
-  });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error saving profile");
+  }
 });
 
 /* =========================
-   RECIPES ROUTES (PERSONAL)
+   RECIPES ROUTES (SQL)
    ========================= */
 
-// Save recipe (append to per-user JSON file)
-app.post("/recipes", requireAuth, (req, res) => {
-  const username = req.session.user.username;
-  if (isBadUsername(username)) return res.status(400).send("Invalid username");
+// Save recipe (personal)
+app.post("/recipes", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
 
-  const { title, description, prepTime, cookTime, cost, ingredients, steps } =
-    req.body || {};
+    const { title, description, prepTime, cookTime, cost, ingredients, steps } = req.body || {};
+    const cleanTitle = String(title || "").trim();
+    if (!cleanTitle) return res.status(400).send("Recipe name is required");
 
-  const cleanTitle = String(title || "").trim();
-  if (!cleanTitle) return res.status(400).send("Recipe name is required");
+    const ins = await run(
+      `INSERT INTO recipes (owner_user_id, title, description, prep_time, cook_time, cost, is_global)
+       VALUES (?, ?, ?, ?, ?, ?, 0)`,
+      [
+        userId,
+        cleanTitle,
+        String(description || "").trim(),
+        Number(prepTime || 0),
+        Number(cookTime || 0),
+        Number(cost || 0),
+      ]
+    );
 
-  const recipe = {
-    id: String(Date.now()),
-    title: cleanTitle,
-    description: String(description || "").trim(),
-    prepTime: Number(prepTime || 0),
-    cookTime: Number(cookTime || 0),
-    cost: Number(cost || 0),
-    ingredients: Array.isArray(ingredients) ? ingredients.map(String) : [],
-    steps: Array.isArray(steps) ? steps.map(String) : [],
-    createdAt: new Date().toISOString(),
-    isGlobal: false,
-  };
+    const recipeId = ins.lastID;
 
-  const filePath = path.join(__dirname, `${username}_recipes.json`);
+    const ing = Array.isArray(ingredients) ? ingredients.map(String) : [];
+    const stp = Array.isArray(steps) ? steps.map(String) : [];
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    let list = [];
-    if (!err && data) {
-      try {
-        list = JSON.parse(data);
-      } catch {
-        list = [];
-      }
+    for (const i of ing) {
+      const clean = String(i).trim();
+      if (clean) await run(`INSERT INTO recipe_ingredients (recipe_id, ingredient) VALUES (?, ?)`, [recipeId, clean]);
+    }
+    for (let idx = 0; idx < stp.length; idx++) {
+      const s = String(stp[idx]).trim();
+      if (s) await run(`INSERT INTO recipe_steps (recipe_id, step_index, step_text) VALUES (?, ?, ?)`, [recipeId, idx, s]);
     }
 
-    if (!Array.isArray(list)) list = [];
-    list.push(recipe);
+    // Return same shape your frontend expects
+    const recipe = {
+      id: String(recipeId),
+      title: cleanTitle,
+      description: String(description || "").trim(),
+      prepTime: Number(prepTime || 0),
+      cookTime: Number(cookTime || 0),
+      cost: Number(cost || 0),
+      ingredients: ing,
+      steps: stp,
+      createdAt: new Date().toISOString(),
+      isGlobal: false,
+    };
 
-    fs.writeFile(filePath, JSON.stringify(list, null, 2), (wErr) => {
-      if (wErr) return res.status(500).send("Error saving recipe");
-      res.json({ ok: true, recipe });
-    });
-  });
+    res.json({ ok: true, recipe });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error saving recipe");
+  }
 });
 
 // Get all personal recipes for logged-in user
-app.get("/recipes", requireAuth, (req, res) => {
-  const username = req.session.user.username;
-  if (isBadUsername(username)) return res.status(400).send("Invalid username");
+app.get("/recipes", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
 
-  const filePath = path.join(__dirname, `${username}_recipes.json`);
+    const rows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE owner_user_id = ? AND is_global = 0
+       ORDER BY id DESC`,
+      [userId]
+    );
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      if (err.code === "ENOENT") return res.json([]);
-      return res.status(500).send("Error reading recipes");
+    const out = [];
+    for (const r of rows) {
+      const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
+        .map((x) => x.ingredient);
+
+      const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
+        .map((x) => x.step_text);
+
+      out.push({
+        id: String(r.id),
+        title: r.title,
+        description: r.description || "",
+        prepTime: r.prep_time,
+        cookTime: r.cook_time,
+        cost: r.cost,
+        ingredients,
+        steps,
+        createdAt: r.created_at,
+        isGlobal: false,
+      });
     }
 
-    try {
-      const list = JSON.parse(data);
-      return res.json(Array.isArray(list) ? list : []);
-    } catch {
-      return res.json([]);
-    }
-  });
+    res.json(out);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading recipes");
+  }
 });
 
 /* =========================
-   GLOBAL RECIPES (NEW)
+   GLOBAL RECIPES (SQL)
    ========================= */
 
-const GLOBAL_RECIPES_FILE = path.join(__dirname, "global_recipes.json");
-
-function ensureGlobalRecipesFile() {
-  if (!fs.existsSync(GLOBAL_RECIPES_FILE)) {
-    const seed = [
-      {
-        id: "g1",
-        title: "Overnight Oats",
-        description: "Easy breakfast prep for the week",
-        prepTime: 5,
-        cookTime: 0,
-        cost: 3.5,
-        ingredients: ["1 cup oats", "1 cup milk", "1 tbsp honey", "berries"],
-        steps: ["Mix everything in a jar", "Refrigerate overnight", "Eat cold"],
-        createdAt: new Date().toISOString(),
-        isGlobal: true,
-      },
-      {
-        id: "g2",
-        title: "Chicken & Rice Bowl",
-        description: "Simple meal prep lunch",
-        prepTime: 10,
-        cookTime: 20,
-        cost: 7.0,
-        ingredients: [
-          "200 g chicken",
-          "1 cup rice",
-          "salt",
-          "pepper",
-          "frozen veggies",
-        ],
-        steps: ["Cook rice", "Cook chicken", "Add veggies", "Assemble bowls"],
-        createdAt: new Date().toISOString(),
-        isGlobal: true,
-      },
-    ];
-    fs.writeFileSync(GLOBAL_RECIPES_FILE, JSON.stringify(seed, null, 2));
-  }
-}
-
 // Get global recipes
-app.get("/recipes/global", requireAuth, (req, res) => {
-  ensureGlobalRecipesFile();
+app.get("/recipes/global", requireAuth, async (req, res) => {
+  try {
+    const rows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE is_global = 1
+       ORDER BY id DESC`
+    );
 
-  fs.readFile(GLOBAL_RECIPES_FILE, "utf8", (err, data) => {
-    if (err) return res.status(500).send("Error reading global recipes");
-    try {
-      const list = JSON.parse(data);
-      return res.json(Array.isArray(list) ? list : []);
-    } catch {
-      return res.json([]);
+    const out = [];
+    for (const r of rows) {
+      const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
+        .map((x) => x.ingredient);
+
+      const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
+        .map((x) => x.step_text);
+
+      out.push({
+        id: "g" + String(r.id),
+        title: r.title,
+        description: r.description || "",
+        prepTime: r.prep_time,
+        cookTime: r.cook_time,
+        cost: r.cost,
+        ingredients,
+        steps,
+        createdAt: r.created_at,
+        isGlobal: true,
+      });
     }
-  });
+
+    res.json(out);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading global recipes");
+  }
 });
 
 // Get both: mine + global
-app.get("/recipes/all", requireAuth, (req, res) => {
-  const username = req.session.user.username;
-  if (isBadUsername(username)) return res.status(400).send("Invalid username");
+app.get("/recipes/all", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
 
-  ensureGlobalRecipesFile();
+    const mineRows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE owner_user_id = ? AND is_global = 0
+       ORDER BY id DESC`,
+      [userId]
+    );
 
-  const minePath = path.join(__dirname, `${username}_recipes.json`);
+    const globalRows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE is_global = 1
+       ORDER BY id DESC`
+    );
 
-  const readMine = () =>
-    new Promise((resolve) => {
-      fs.readFile(minePath, "utf8", (err, data) => {
-        if (err) return resolve([]); // no file => no recipes yet
-        try {
-          const list = JSON.parse(data);
-          resolve(Array.isArray(list) ? list : []);
-        } catch {
-          resolve([]);
-        }
-      });
+    async function hydrate(rows, isGlobal) {
+      const out = [];
+      for (const r of rows) {
+        const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
+          .map((x) => x.ingredient);
+
+        const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
+          .map((x) => x.step_text);
+
+        out.push({
+          id: String(r.id),
+          title: r.title,
+          description: r.description || "",
+          prepTime: r.prep_time,
+          cookTime: r.cook_time,
+          cost: r.cost,
+          ingredients,
+          steps,
+          createdAt: r.created_at,
+          isGlobal,
+        });
+      }
+      return out;
+    }
+
+    res.json({
+      mine: await hydrate(mineRows, false),
+      global: await hydrate(globalRows, true),
     });
-
-  const readGlobal = () =>
-    new Promise((resolve) => {
-      fs.readFile(GLOBAL_RECIPES_FILE, "utf8", (err, data) => {
-        if (err) return resolve([]);
-        try {
-          const list = JSON.parse(data);
-          resolve(Array.isArray(list) ? list : []);
-        } catch {
-          resolve([]);
-        }
-      });
-    });
-
-  Promise.all([readMine(), readGlobal()]).then(([mine, global]) => {
-    res.json({ mine, global });
-  });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading recipes");
+  }
 });
 
 /* =========================
-   AUTH ROUTES
+   AUTH ROUTES (SQL)
    ========================= */
 
-app.post("/register", (req, res) => {
-  let { username, password } = req.body;
+app.post("/register", async (req, res) => {
+  try {
+    let { username, password } = req.body;
 
-  username = (username || "").trim();
-  password = (password || "").trim();
-
-  fs.readFile("users.txt", "utf8", (err, data) => {
-    if (err && err.code !== "ENOENT") {
-      return res.status(500).send("Error reading users file");
-    }
-    const users = data || "";
+    username = (username || "").trim();
+    password = (password || "").trim();
 
     if (username.length < 6) {
-      return res
-        .status(400)
-        .send("Username must be at least 6 characters long");
+      return res.status(400).send("Username must be at least 6 characters long");
     }
-
-    const lines = users.split("\n");
-    const exists = lines.some((line) =>
-      line.startsWith(`Username: ${username},`)
-    );
-    if (exists) return res.status(400).send("Username already exists");
-
     if (password.length < 6) {
       return res.status(400).send("Password must be at least 6 characters long");
     }
 
-    const line = `Username: ${username}, Password: ${password}\n`;
-    fs.appendFile("users.txt", line, (err) => {
-      if (err) return res.status(500).send("Error saving user");
+    const existing = await get(`SELECT id FROM users WHERE username = ?`, [username]);
+    if (existing) return res.status(400).send("Username already exists");
 
-      if (isBadUsername(username)) {
-        return res.status(400).send("Invalid username for filename");
-      }
+    const password_hash = await bcrypt.hash(password, 10);
+    const ins = await run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, password_hash]);
+    const userId = ins.lastID;
 
-      const userFilePath = path.join(__dirname, `${username}.txt`);
+    // Grab allergies & preferences from request (optional)
+    let allergies = req.body.allergies || [];
+    let preferences = req.body.preferences || [];
 
-      // Grab allergies & preferences from request (optional)
-      let allergies = req.body.allergies || [];
-      let preferences = req.body.preferences || [];
+    if (!Array.isArray(allergies)) allergies = [allergies];
+    if (!Array.isArray(preferences)) preferences = [preferences];
 
-      if (!Array.isArray(allergies)) allergies = [allergies];
-      if (!Array.isArray(preferences)) preferences = [preferences];
+    allergies = allergies.map((a) => String(a).trim()).filter(Boolean);
+    preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
 
-      allergies = allergies.map((a) => String(a).trim()).filter(Boolean);
-      preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
-
-      const fileContent =
-        `Username: ${username}\n` +
-        `Allergies: ${allergies.join(", ")}\n` +
-        `Preferences: ${preferences.join(", ")}\n`;
-
-      fs.writeFile(userFilePath, fileContent, { flag: "wx" }, (fileErr) => {
-        if (fileErr && fileErr.code !== "EEXIST") {
-          return res
-            .status(500)
-            .send("User registered, but failed to create user file");
-        }
-        return res.send("User registered successfully");
-      });
-    });
-  });
-});
-
-app.post("/login", (req, res) => {
-  let { username, password } = req.body;
-  username = (username || "").trim();
-  password = (password || "").trim();
-
-  fs.readFile("users.txt", "utf8", (err, data) => {
-    if (err) return res.status(500).send("Error reading users file");
-
-    const users = data.split("\n");
-
-    for (let line of users) {
-      if (line.includes(`Username: ${username}, Password: ${password}`)) {
-        req.session.user = { username };
-        return req.session.save(() => res.send("Login successful"));
-      }
+    for (const a of allergies) {
+      await run(`INSERT OR IGNORE INTO user_allergies (user_id, allergy) VALUES (?, ?)`, [userId, a]);
+    }
+    for (const p of preferences) {
+      await run(`INSERT OR IGNORE INTO user_preferences (user_id, preference) VALUES (?, ?)`, [userId, p]);
     }
 
-    res.status(401).send("Invalid username or password");
-  });
+    return res.send("User registered successfully");
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error registering user");
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    let { username, password } = req.body;
+
+    username = (username || "").trim();
+    password = (password || "").trim();
+
+    const user = await get(`SELECT id, username, password_hash FROM users WHERE username = ?`, [username]);
+    if (!user) return res.status(401).send("Invalid username or password");
+
+    const ok = await bcrypt.compare(password, user.password_hash);
+    if (!ok) return res.status(401).send("Invalid username or password");
+
+    req.session.user = { id: user.id, username: user.username };
+    return req.session.save(() => res.send("Login successful"));
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Server error");
+  }
 });
 
 // Logout
@@ -401,6 +387,17 @@ app.post("/logout", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
-});
+/* =========================
+   BOOT
+   ========================= */
+
+initDb()
+  .then(() => {
+    app.listen(3000, () => {
+      console.log("Server running at http://localhost:3000");
+    });
+  })
+  .catch((e) => {
+    console.error("DB init failed:", e);
+    process.exit(1);
+  });
