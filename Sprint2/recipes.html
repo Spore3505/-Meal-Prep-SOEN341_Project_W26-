@@ -302,15 +302,21 @@
               : `<div class="meta">No ingredients listed.</div>`
           }
 
-          <div class="listTitle">Steps</div>
+  <div class="listTitle">Steps</div>
           ${
             steps.length
               ? `<ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul>`
               : `<div class="meta">No steps listed.</div>`
           }
+          <div style="margin-top:12px; display:flex; gap:8px;">
+          <button class="btn" data-id="${r.id}" onclick="editRecipe(this.dataset.id)">Edit</button>
+        <button class="btn" data-id="${r.id}" onclick="deleteRecipe(this.dataset.id)" style="background:#c94b4b;">Delete</button>
+      </div>
         </div>
       `;
     }
+
+
 
     function renderSection(containerId, recipes) {
       const el = document.getElementById(containerId);
@@ -369,6 +375,29 @@
       document.getElementById("searchInput").addEventListener("input", applySearch);
       loadAll();
     });
+
+
+    function editRecipe(id) {
+  // Redirect to edit page with recipe ID
+  window.location.href = `edit.html?id=${id}`;
+}
+
+async function deleteRecipe(id) {
+  console.log("Deleting recipe id:", id);
+  if (!confirm("Are you sure you want to delete this recipe?")) return;
+
+  try {
+    const res = await fetch(`/recipes/${id}`, {
+      method: "DELETE",
+      credentials: "include"
+    });
+    if (!res.ok) throw new Error("Delete failed");
+    loadAll();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete recipe.");
+  }
+}
   </script>
 </body>
 </html>

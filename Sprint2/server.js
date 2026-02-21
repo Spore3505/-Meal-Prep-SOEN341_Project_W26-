@@ -36,7 +36,6 @@ app.use(
   ["/account.html", "/create.html", "/edit.html", "/recipes.html"],
   requireAuth
 );
-app.use(express.static(__dirname));
 
 // Default route
 app.get("/", (req, res) => {
@@ -169,17 +168,19 @@ app.post("/recipes", requireAuth, async (req, res) => {
 });
 
 // Get all personal recipes for logged-in user
-app.get("/recipes", requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id;
+ app.get("/recipes", requireAuth, async (req, res) => {
+   try {
+     const userId = req.session.user.id;
 
-    const rows = await all(
-      `SELECT id, title, description, prep_time, cook_time, cost, created_at
-       FROM recipes
-       WHERE owner_user_id = ? AND is_global = 0
-       ORDER BY id DESC`,
-      [userId]
-    );
+     const rows = await all(
+       `SELECT id, title, description, prep_time, cook_time, cost, created_at
+        FROM recipes
+        WHERE owner_user_id = ? AND is_global = 0
+        ORDER BY id DESC`,
+       [userId]
+     );
+
+
 
     const out = [];
     for (const r of rows) {
@@ -390,6 +391,9 @@ app.post("/logout", (req, res) => {
 /* =========================
    BOOT
    ========================= */
+
+
+app.use(express.static(__dirname));
 
 initDb()
   .then(() => {
