@@ -403,11 +403,13 @@ app.delete("/recipes/:id", requireAuth, async (req, res) => {
   }
 });
 
-// for the open the recipe
+// Open one recipe
 app.get("/recipes/:id", requireAuth, async (req, res) => {
   try {
     const userId = req.session.user.id;
     const id = req.params.id;
+
+    if (!id) return res.status(400).json({ error: "No recipe ID provided" });
 
     const r = await get(
       `SELECT id, title, description, prep_time, cook_time, cost, owner_user_id
@@ -415,15 +417,11 @@ app.get("/recipes/:id", requireAuth, async (req, res) => {
        WHERE id = ?`,
       [id]
     );
-    if (!editId) {
-      alert("No recipe ID provided.");
-      window.location.href = "recipes.html";
-    }
 
-    if (!r) return res.status(404).send("Recipe not found");
+    if (!r) return res.status(404).json({ error: "Recipe not found" });
 
     if (r.owner_user_id !== userId)
-      return res.status(403).send("Not authorized");
+      return res.status(403).json({ error: "Not authorized" });
 
     const ingredients = (
       await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [id])
@@ -446,9 +444,10 @@ app.get("/recipes/:id", requireAuth, async (req, res) => {
       ingredients,
       steps,
     });
+
   } catch (e) {
     console.error(e);
-    res.status(500).send("Error reading recipe");
+    res.status(500).json({ error: "Error reading recipe" });
   }
 });
 
@@ -529,4 +528,5 @@ initDb()
     process.exit(1);
 
   });
+
 
