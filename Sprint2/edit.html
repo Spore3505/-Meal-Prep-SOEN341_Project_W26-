@@ -281,99 +281,137 @@
 </main>
 
 <script>
-    function createTag(text, container) {
-      const tag = document.createElement("div");
-      tag.className = "tag";
-      tag.innerHTML = `${text} <button type="button" onclick="this.parentElement.remove()">✕</button>`;
-      container.appendChild(tag);
-    }
+    <script>
+  const editId = new URLSearchParams(window.location.search).get("id");
 
-    function addIngredient() {
-      const qty = document.getElementById("ingredientQty").value;
-      const unit = document.getElementById("ingredientUnit").value;
-      const name = document.getElementById("ingredientName").value;
-
-      if (name.trim() !== "") {
-        let text = "";
-        if (qty) text += qty + " ";
-        if (unit) text += unit + " ";
-        text += name;
-
-        createTag(text, document.getElementById("ingredients"));
-
-        document.getElementById("ingredientQty").value = "";
-        document.getElementById("ingredientUnit").value = "";
-        document.getElementById("ingredientName").value = "";
-      }
-    }
-
-    function addStep() {
-      const input = document.getElementById("stepInput");
-      if (input.value.trim() !== "") {
-        createTag(input.value, document.getElementById("steps"));
-        input.value = "";
-      }
-    }
-
-    function getTagsText(containerId) {
-      const container = document.getElementById(containerId);
-      return Array.from(container.querySelectorAll(".tag"))
-        .map(tag => tag.textContent.replace("✕", "").trim())
-        .filter(Boolean);
-    }
-    const editId = new URLSearchParams(window.location.search).get("id");
-
-// Load recipe data into form
-async function loadRecipeForEdit() {
-console.log("Editing recipe with id:", editId);
-  const res = await fetch(`/recipes/${editId}`, { credentials: "include" });
-  const r = await res.json();
-
-  document.getElementById("title").value = r.title || "";
-  document.getElementById("description").value = r.description || "";
-  document.getElementById("prepTime").value = r.prepTime || "";
-  document.getElementById("cookTime").value = r.cookTime || "";
-  document.getElementById("cost").value = r.cost || "";
-
-  r.ingredients.forEach(i => createTag(i, document.getElementById("ingredients")));
-  r.steps.forEach(s => createTag(s, document.getElementById("steps")));
-}
-
-// Save updates
-async function saveRecipe() {
-  const msg = document.getElementById("msg");
-
-  const payload = {
-    title: document.getElementById("title").value,
-    description: document.getElementById("description").value,
-    prepTime: document.getElementById("prepTime").value,
-    cookTime: document.getElementById("cookTime").value,
-    cost: document.getElementById("cost").value,
-    ingredients: getTagsText("ingredients"),
-    steps: getTagsText("steps"),
-  };
-
-  try {
-    const res = await fetch(`/recipes/${editId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) throw new Error("Failed to update");
-
-    msg.style.color = "green";
-    msg.innerText = "Recipe updated!";
-  } catch (e) {
-    console.error(e);
-    msg.style.color = "red";
-    msg.innerText = "Server error while saving";
+  if (!editId) {
+    alert("No recipe ID provided.");
+    window.location.href = "recipes.html";
   }
-}
 
-// Run on page load
-loadRecipeForEdit();
+  function createTag(text, container) {
+    const tag = document.createElement("div");
+    tag.className = "tag";
+
+    const span = document.createElement("span");
+    span.textContent = text;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "✕";
+    btn.onclick = () => tag.remove();
+
+    tag.appendChild(span);
+    tag.appendChild(btn);
+    container.appendChild(tag);
+  }
+
+  function addIngredient() {
+    const qty = document.getElementById("ingredientQty").value;
+    const unit = document.getElementById("ingredientUnit").value;
+    const name = document.getElementById("ingredientName").value;
+
+    if (name.trim() !== "") {
+      let text = "";
+      if (qty) text += qty + " ";
+      if (unit) text += unit + " ";
+      text += name;
+
+      createTag(text, document.getElementById("ingredients"));
+
+      document.getElementById("ingredientQty").value = "";
+      document.getElementById("ingredientUnit").value = "";
+      document.getElementById("ingredientName").value = "";
+    }
+  }
+
+  function addStep() {
+    const input = document.getElementById("stepInput");
+    if (input.value.trim() !== "") {
+      createTag(input.value, document.getElementById("steps"));
+      input.value = "";
+    }
+  }
+
+  function getTagsText(containerId) {
+    const container = document.getElementById(containerId);
+    return Array.from(container.querySelectorAll(".tag span"))
+      .map(span => span.textContent.trim())
+      .filter(Boolean);
+  }
+
+  // LOAD RECIPE
+  async function loadRecipeForEdit() {
+    try {
+      const res = await fetch(`/recipes/${editId}`, {
+        credentials: "include"
+      });
+
+      if (!res.ok) throw new Error("Failed to load recipe");
+
+      const r = await res.json();
+
+      document.getElementById("title").value = r.title || "";
+      document.getElementById("description").value = r.description || "";
+      document.getElementById("prepTime").value = r.prepTime || "";
+      document.getElementById("cookTime").value = r.cookTime || "";
+      document.getElementById("cost").value = r.cost || "";
+
+      // Clear old tags before loading
+      document.getElementById("ingredients").innerHTML = "";
+      document.getElementById("steps").innerHTML = "";
+
+      (r.ingredients || []).forEach(i =>
+        createTag(i, document.getElementById("ingredients"))
+      );
+
+      (r.steps || []).forEach(s =>
+        createTag(s, document.getElementById("steps"))
+      );
+
+    } catch (err) {
+      console.error(err);
+      alert("Error loading recipe.");
+    }
+  }
+
+  // SAVE RECIPE
+  async function saveRecipe() {
+    const msg = document.getElementById("msg");
+
+    const payload = {
+      title: document.getElementById("title").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      prepTime: document.getElementById("prepTime").value,
+      cookTime: document.getElementById("cookTime").value,
+      cost: document.getElementById("cost").value,
+      ingredients: getTagsText("ingredients"),
+      steps: getTagsText("steps")
+    };
+
+    try {
+      const res = await fetch(`/recipes/${editId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Failed to update");
+
+      msg.style.color = "green";
+      msg.innerText = "Recipe updated successfully!";
+
+
+    } catch (err) {
+      console.error(err);
+      msg.style.color = "red";
+      msg.innerText = "Server error while saving.";
+    }
+  }
+
+  loadRecipeForEdit();
+</script>
 </script>
 </body>
 </html>
