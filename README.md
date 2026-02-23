@@ -3,9 +3,7 @@
 
 Members:
 
-Muhammad Mobin Syed (40299024)
-
-Role:Backend Programming
+Muhammad Mobin Syed (40299024)-BackEnd Programming
 
 Christopher Dunn (40285514)
 
