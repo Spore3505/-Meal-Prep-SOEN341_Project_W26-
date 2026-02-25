@@ -9,7 +9,7 @@ Christopher Dunn (40285514)
 
 Yalan Luo (40275103)
 
-Mathieu Boileau (40257130)
+Mathieu Boileau (40257130) role: Role: Frontend‑focused developer (with some backend contribution).
 
 Ali Kotb (40217082)
 
