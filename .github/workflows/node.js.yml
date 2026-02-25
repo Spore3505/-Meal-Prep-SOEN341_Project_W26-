@@ -5,10 +5,12 @@ on:
     branches: ["main"]
     paths:
       - "Sprint2/**"
+      - ".github/workflows/**"
   pull_request:
     branches: ["main"]
     paths:
       - "Sprint2/**"
+      - ".github/workflows/**"
 
 jobs:
   test:
@@ -19,13 +21,13 @@ jobs:
         working-directory: Sprint2
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
 
       - name: Install dependencies
         run: npm install
