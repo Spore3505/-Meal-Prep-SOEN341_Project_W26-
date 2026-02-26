@@ -585,6 +585,53 @@ app.use(express.static(__dirname));
 // Export for Jest/Supertest
 module.exports = app;
 
+
+/* =========================
+  filter recipes
+ ========================= */
+app.get("/recipes/all", (req, res) => {
+  const userId = 1; 
+
+  const mineQuery = `SELECT * FROM recipes WHERE owner_user_id = ?`;
+  const globalQuery = `SELECT * FROM recipes WHERE is_global = 1`;
+
+  db.all(mineQuery, [userId], (err, mineRows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    db.all(globalQuery, [], (err2, globalRows) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      const addDetails = (recipes, cb) => {
+        let count = 0;
+        if (!recipes.length) return cb(recipes);
+        recipes.forEach((r, i) => {
+          db.all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id], (e1, ing) => {
+            db.all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index ASC`, [r.id], (e2, steps) => {
+              r.ingredients = ing.map(x => x.ingredient);
+              r.steps = steps.map(x => x.step_text);
+              count++;
+              if (count === recipes.length) cb(recipes);
+            });
+          });
+        });
+      };
+
+      addDetails(mineRows, (mine) => {
+        addDetails(globalRows, (global) => {
+           res.json({ mine, global });
+        });
+      });
+    });
+  });
+});
+
+app.delete("/recipes/:id", (req, res) => {
+  const recipeId = req.params.id;
+  db.run(`DELETE FROM recipes WHERE id = ?`, [recipeId], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ success: true });
+  });
+});
+
 /* =========================
    BOOT
    ========================= */
@@ -601,3 +648,4 @@ if (require.main === module) {
       process.exit(1);
     });
 }
+
