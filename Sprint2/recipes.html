@@ -218,6 +218,37 @@
       .arrowBtn { display: none; }
       .scrollRow { grid-auto-columns: minmax(260px, 85vw); }
     }
+
+    
+.filterTag {
+  background: rgba(241, 173, 70, 0.719);
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filterTag:hover {
+  background: rgba(231, 178, 98, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+}
+
+.filterTag span.remove {
+  font-weight: bold;
+  cursor: pointer;
+  color: #c94b4b;
+  padding-left: 4px;
+  font-size: 16px;
+  line-height: 1;
+}
   </style>
 </head>
 
@@ -246,6 +277,19 @@
         <button class="btn" onclick="loadAll()">Refresh</button>
         <button class="btn" onclick="window.location.href='create.html'">Add New Recipe</button>
       </div>
+<div id="filterForm" class="topActions" style="flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+  <input type="number" id="minPrepTime" class="searchInput" placeholder="Min Prep Time" />
+  <input type="number" id="maxPrepTime" class="searchInput" placeholder="Max Prep Time" />
+  <input type="number" id="minCookTime" class="searchInput" placeholder="Min Cook Time" />
+  <input type="number" id="maxCookTime" class="searchInput" placeholder="Max Cook Time" />
+  <input type="number" id="minCost" class="searchInput" placeholder="Min Cost" />
+  <input type="number" id="maxCost" class="searchInput" placeholder="Max Cost" />
+
+  <button class="btn" onclick="applyFilter()">Apply Filters</button>
+
+  <div id="activeFilters" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+</div>
+</div>
 
       <div class="sectionTitle">My Personal Recipes</div>
       <div class="rowWrap">
@@ -398,6 +442,67 @@ async function deleteRecipe(id) {
     alert("Failed to delete recipe.");
   }
 }
+
+const activeFiltersEl = document.getElementById("activeFilters");
+const filters = {};
+function applyFilter() {
+
+  const minPrep = document.getElementById("minPrepTime").value;
+  const maxPrep = document.getElementById("maxPrepTime").value;
+  const minCook = document.getElementById("minCookTime").value;
+  const maxCook = document.getElementById("maxCookTime").value;
+  const minCost = document.getElementById("minCost").value;
+  const maxCost = document.getElementById("maxCost").value;
+
+  if(minPrep || maxPrep) filters.prepTime = {min:minPrep,max:maxPrep};
+    else delete filters.prepTime;
+
+    if(minCook || maxCook) filters.cookTime = {min:minCook,max:maxCook};
+    else delete filters.cookTime;
+
+    if(minCost || maxCost) filters.cost = {min:minCost,max:maxCost};
+    else delete filters.cost;
+
+    renderFilterTags();
+    applySearch(); 
+}
+
+function renderFilterTags() {
+    activeFiltersEl.innerHTML = "";
+    for(const key in filters) {
+      const f = filters[key];
+      const text = `${key}: ${f.min||0} - ${f.max||'∞'}`;
+      const tag = document.createElement("div");
+      tag.className = "filterTag";
+      tag.innerHTML = `${text} <span class="remove" onclick="removeFilter('${key}')">×</span>`;
+      activeFiltersEl.appendChild(tag);
+    }
+  }
+
+  function removeFilter(key) {
+    delete filters[key];
+    renderFilterTags();
+    applySearch();
+  }
+  function applySearch() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+
+    function matchFilter(r) {
+      for(const key in filters) {
+        const f = filters[key];
+        const val = r[key];
+        if(f.min && val < Number(f.min)) return false;
+        if(f.max && val > Number(f.max)) return false;
+      }
+      return String(r.title||"").toLowerCase().includes(query);
+    }
+
+    const filteredMine = allMine.filter(matchFilter);
+    const filteredGlobal = allGlobal.filter(matchFilter);
+
+    renderSection("mine", filteredMine);
+    renderSection("global", filteredGlobal);
+  }
   </script>
 </body>
 </html>
