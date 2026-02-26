@@ -49,7 +49,8 @@ app.get("/account.html", requireAuth, (req, res) => {
 
 // Check login status
 app.get("/me", (req, res) => {
-  if (req.session?.user) return res.json({ loggedIn: true, user: req.session.user });
+  if (req.session?.user)
+    return res.json({ loggedIn: true, user: req.session.user });
   res.json({ loggedIn: false });
 });
 
@@ -63,11 +64,19 @@ app.get("/profile", requireAuth, async (req, res) => {
     const userId = req.session.user.id;
     const username = req.session.user.username;
 
-    const allergies = (await all(`SELECT allergy FROM user_allergies WHERE user_id = ? ORDER BY allergy`, [userId]))
-      .map((r) => r.allergy);
+    const allergies = (
+      await all(
+        `SELECT allergy FROM user_allergies WHERE user_id = ? ORDER BY allergy`,
+        [userId]
+      )
+    ).map((r) => r.allergy);
 
-    const preferences = (await all(`SELECT preference FROM user_preferences WHERE user_id = ? ORDER BY preference`, [userId]))
-      .map((r) => r.preference);
+    const preferences = (
+      await all(
+        `SELECT preference FROM user_preferences WHERE user_id = ? ORDER BY preference`,
+        [userId]
+      )
+    ).map((r) => r.preference);
 
     res.json({ username, allergies, preferences });
   } catch (e) {
@@ -93,10 +102,16 @@ app.post("/profile", requireAuth, async (req, res) => {
     await run(`DELETE FROM user_preferences WHERE user_id = ?`, [userId]);
 
     for (const a of allergies) {
-      await run(`INSERT INTO user_allergies (user_id, allergy) VALUES (?, ?)`, [userId, a]);
+      await run(
+        `INSERT INTO user_allergies (user_id, allergy) VALUES (?, ?)`,
+        [userId, a]
+      );
     }
     for (const p of preferences) {
-      await run(`INSERT INTO user_preferences (user_id, preference) VALUES (?, ?)`, [userId, p]);
+      await run(
+        `INSERT INTO user_preferences (user_id, preference) VALUES (?, ?)`,
+        [userId, p]
+      );
     }
 
     res.send("Profile updated");
@@ -115,7 +130,8 @@ app.post("/recipes", requireAuth, async (req, res) => {
   try {
     const userId = req.session.user.id;
 
-    const { title, description, prepTime, cookTime, cost, ingredients, steps } = req.body || {};
+    const { title, description, prepTime, cookTime, cost, ingredients, steps } =
+      req.body || {};
     const cleanTitle = String(title || "").trim();
     if (!cleanTitle) return res.status(400).send("Recipe name is required");
 
@@ -139,11 +155,19 @@ app.post("/recipes", requireAuth, async (req, res) => {
 
     for (const i of ing) {
       const clean = String(i).trim();
-      if (clean) await run(`INSERT INTO recipe_ingredients (recipe_id, ingredient) VALUES (?, ?)`, [recipeId, clean]);
+      if (clean)
+        await run(
+          `INSERT INTO recipe_ingredients (recipe_id, ingredient) VALUES (?, ?)`,
+          [recipeId, clean]
+        );
     }
     for (let idx = 0; idx < stp.length; idx++) {
       const s = String(stp[idx]).trim();
-      if (s) await run(`INSERT INTO recipe_steps (recipe_id, step_index, step_text) VALUES (?, ?, ?)`, [recipeId, idx, s]);
+      if (s)
+        await run(
+          `INSERT INTO recipe_steps (recipe_id, step_index, step_text) VALUES (?, ?, ?)`,
+          [recipeId, idx, s]
+        );
     }
 
     // Return same shape your frontend expects
@@ -168,27 +192,32 @@ app.post("/recipes", requireAuth, async (req, res) => {
 });
 
 // Get all personal recipes for logged-in user
- app.get("/recipes", requireAuth, async (req, res) => {
-   try {
-     const userId = req.session.user.id;
+app.get("/recipes", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
 
-     const rows = await all(
-       `SELECT id, title, description, prep_time, cook_time, cost, created_at
-        FROM recipes
-        WHERE owner_user_id = ? AND is_global = 0
-        ORDER BY id DESC`,
-       [userId]
-     );
-
-
+    const rows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE owner_user_id = ? AND is_global = 0
+       ORDER BY id DESC`,
+      [userId]
+    );
 
     const out = [];
     for (const r of rows) {
-      const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
-        .map((x) => x.ingredient);
+      const ingredients = (
+        await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+          r.id,
+        ])
+      ).map((x) => x.ingredient);
 
-      const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
-        .map((x) => x.step_text);
+      const steps = (
+        await all(
+          `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+          [r.id]
+        )
+      ).map((x) => x.step_text);
 
       out.push({
         id: String(r.id),
@@ -227,11 +256,18 @@ app.get("/recipes/global", requireAuth, async (req, res) => {
 
     const out = [];
     for (const r of rows) {
-      const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
-        .map((x) => x.ingredient);
+      const ingredients = (
+        await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+          r.id,
+        ])
+      ).map((x) => x.ingredient);
 
-      const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
-        .map((x) => x.step_text);
+      const steps = (
+        await all(
+          `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+          [r.id]
+        )
+      ).map((x) => x.step_text);
 
       out.push({
         id: "g" + String(r.id),
@@ -277,11 +313,19 @@ app.get("/recipes/all", requireAuth, async (req, res) => {
     async function hydrate(rows, isGlobal) {
       const out = [];
       for (const r of rows) {
-        const ingredients = (await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [r.id]))
-          .map((x) => x.ingredient);
+        const ingredients = (
+          await all(
+            `SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`,
+            [r.id]
+          )
+        ).map((x) => x.ingredient);
 
-        const steps = (await all(`SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`, [r.id]))
-          .map((x) => x.step_text);
+        const steps = (
+          await all(
+            `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+            [r.id]
+          )
+        ).map((x) => x.step_text);
 
         out.push({
           id: String(r.id),
@@ -327,11 +371,16 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("Password must be at least 6 characters long");
     }
 
-    const existing = await get(`SELECT id FROM users WHERE username = ?`, [username]);
+    const existing = await get(`SELECT id FROM users WHERE username = ?`, [
+      username,
+    ]);
     if (existing) return res.status(400).send("Username already exists");
 
     const password_hash = await bcrypt.hash(password, 10);
-    const ins = await run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, password_hash]);
+    const ins = await run(
+      `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
+      [username, password_hash]
+    );
     const userId = ins.lastID;
 
     // Grab allergies & preferences from request (optional)
@@ -345,10 +394,16 @@ app.post("/register", async (req, res) => {
     preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
 
     for (const a of allergies) {
-      await run(`INSERT OR IGNORE INTO user_allergies (user_id, allergy) VALUES (?, ?)`, [userId, a]);
+      await run(
+        `INSERT OR IGNORE INTO user_allergies (user_id, allergy) VALUES (?, ?)`,
+        [userId, a]
+      );
     }
     for (const p of preferences) {
-      await run(`INSERT OR IGNORE INTO user_preferences (user_id, preference) VALUES (?, ?)`, [userId, p]);
+      await run(
+        `INSERT OR IGNORE INTO user_preferences (user_id, preference) VALUES (?, ?)`,
+        [userId, p]
+      );
     }
 
     return res.send("User registered successfully");
@@ -365,7 +420,10 @@ app.post("/login", async (req, res) => {
     username = (username || "").trim();
     password = (password || "").trim();
 
-    const user = await get(`SELECT id, username, password_hash FROM users WHERE username = ?`, [username]);
+    const user = await get(
+      `SELECT id, username, password_hash FROM users WHERE username = ?`,
+      [username]
+    );
     if (!user) return res.status(401).send("Invalid username or password");
 
     const ok = await bcrypt.compare(password, user.password_hash);
@@ -389,8 +447,9 @@ app.post("/logout", (req, res) => {
 });
 
 /* =========================
-   BOOT
+   RECIPE CRUD (SQL)
    ========================= */
+
 app.delete("/recipes/:id", requireAuth, async (req, res) => {
   const id = req.params.id;
   try {
@@ -424,15 +483,17 @@ app.get("/recipes/:id", requireAuth, async (req, res) => {
       return res.status(403).json({ error: "Not authorized" });
 
     const ingredients = (
-      await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [id])
-    ).map(x => x.ingredient);
+      await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+        id,
+      ])
+    ).map((x) => x.ingredient);
 
     const steps = (
       await all(
         `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
         [id]
       )
-    ).map(x => x.step_text);
+    ).map((x) => x.step_text);
 
     res.json({
       id: String(r.id),
@@ -444,20 +505,20 @@ app.get("/recipes/:id", requireAuth, async (req, res) => {
       ingredients,
       steps,
     });
-
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Error reading recipe" });
   }
 });
 
-// to update the recipe
+// Update the recipe
 app.put("/recipes/:id", requireAuth, async (req, res) => {
   try {
     const userId = req.session.user.id;
     const id = req.params.id;
 
-    const { title, description, prepTime, cookTime, cost, ingredients, steps } = req.body;
+    const { title, description, prepTime, cookTime, cost, ingredients, steps } =
+      req.body;
 
     const existing = await get(
       `SELECT owner_user_id FROM recipes WHERE id = ?`,
@@ -515,18 +576,28 @@ app.put("/recipes/:id", requireAuth, async (req, res) => {
   }
 });
 
+/* =========================
+   STATIC + EXPORT
+   ========================= */
+
 app.use(express.static(__dirname));
 
-initDb()
-  .then(() => {
-    app.listen(3000, () => {
-      console.log("Server running at http://localhost:3000");
+// Export for Jest/Supertest
+module.exports = app;
+
+/* =========================
+   BOOT
+   ========================= */
+
+if (require.main === module) {
+  initDb()
+    .then(() => {
+      app.listen(3000, () => {
+        console.log("Server running at http://localhost:3000");
+      });
+    })
+    .catch((e) => {
+      console.error("DB init failed:", e);
+      process.exit(1);
     });
-  })
-  .catch((e) => {
-    console.error("DB init failed:", e);
-    process.exit(1);
-
-  });
-
-
+}
