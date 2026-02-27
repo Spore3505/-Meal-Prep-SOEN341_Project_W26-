@@ -35,7 +35,7 @@ test("POST /profile saves allergies/preferences; GET /profile returns them", asy
   const res = await agent.get("/profile");
   expect(res.status).toBe(200);
   expect(res.body.username).toBe("profileuser1");
-  expect(res.body.allergies).toEqual(["milk", "peanuts"]); // your SQL orders alphabetically
+  expect(res.body.allergies).toEqual(["milk", "peanuts"]);
   expect(res.body.preferences).toEqual(["high-protein", "spicy"]);
 });
 
