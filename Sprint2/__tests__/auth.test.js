@@ -7,7 +7,6 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  // wipe DB tables so tests don't affect each other
   await run("DELETE FROM user_allergies");
   await run("DELETE FROM user_preferences");
   await run("DELETE FROM recipe_steps");
