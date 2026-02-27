@@ -5,7 +5,7 @@ Members:
 
 Muhammad Mobin Syed (40299024)-BackEnd Programming
 
-Christopher Dunn (40285514)
+Christopher Dunn (40285514) BackEnd and FrontEnd programming
 
 Yalan Luo (40275103)
 
