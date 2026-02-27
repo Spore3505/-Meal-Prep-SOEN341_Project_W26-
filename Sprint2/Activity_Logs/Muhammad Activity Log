@@ -1,1 +1,13 @@
+Feb 13
 
+-Did the backend so that recipes are stored in the database and are unique to users
+-Made global recepies available to all users
+
+Feb 20
+
+-Created search bar adn did backend for it
+-transfered data base to SQL
+
+Feb 24
+
+-Created automated tests so that everytime a commit is made github auto checks thw code
