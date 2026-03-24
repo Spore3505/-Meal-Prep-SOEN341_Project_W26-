@@ -575,6 +575,78 @@ app.put("/recipes/:id", requireAuth, async (req, res) => {
     res.status(500).send("Error updating recipe");
   }
 });
+/* =========================
+    Meal_Plan backend
+   ========================= */
+app.post("/plan/save", requireAuth, async (req, res) => {
+  try {
+    const { day, meal, recipeId } = req.body;
+
+    console.log("Saving meal plan:", { day, meal, recipeId });
+
+    if (!day || !meal || !recipeId) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    await run(
+      `INSERT INTO meal_plans (user_id, day, meal, recipe_id)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT(user_id, day, meal)
+       DO UPDATE SET recipe_id = excluded.recipe_id`,
+      [req.session.user.id, day, meal, recipeId]
+    );
+    
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("SAVE ERROR:", err);
+    res.status(500).json({ error: "Failed to save meal plan" });
+  }
+});
+app.post("/plan/delete", requireAuth, async (req, res) => {
+  const { day, meal } = req.body;
+  if (!day || !meal) return res.status(400).json({ error: "Missing day or meal" });
+
+  try {
+    await run(
+      `DELETE FROM meal_plans WHERE user_id = ? AND day = ? AND meal = ?`,
+      [req.session.user.id, day, meal]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete meal plan" });
+  }
+});
+app.get("/plan", requireAuth, async (req, res) => {
+  try {
+    const rows = await all(
+      `SELECT day, meal, recipe_id 
+       FROM meal_plans 
+       WHERE user_id = ?`,
+      [req.session.user.id]
+    );
+
+    res.json({ meals: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to load meal plan" });
+  }
+});
+app.post("/plan/clear-day", requireAuth, async (req, res) => {
+  const { day } = req.body;
+  try {
+    await run(
+      `DELETE FROM meal_plans WHERE user_id = ? AND day = ?`,
+      [req.session.user.id, day]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to clear day" });
+  }
+});
+
 
 /* =========================
    STATIC + EXPORT
