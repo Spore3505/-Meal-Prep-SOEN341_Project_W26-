@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meal Planner</title>
+<style>
+
+  body {
+    min-height: 100vh; /* IMPORTANT */
+    background-image: url('images/background.avif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* 👈 key line */
+  }
+
+  header {
+    background-color: #e7b262;
+    color: white;
+    text-align: center;
+    padding: 18px 10px 10px;
+  }
+
+  header h1 {
+    width: 400px;
+    height: 120px;
+    margin: 0 auto;
+    background-image: url('images/logo.png');
+    background-size: 100px 100px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 70px;
+    font-size: 52px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+    line-height: 120px;
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 8px;
+  }
+
+  nav li {
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 6px 12px;
+    display: inline-block;
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+    color: #ffeb3b;
+  }
+
+  section {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+ 
+  #planner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .day-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .day-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .meal {
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .meal:hover {
+    transform: scale(1.03);
+  }
+
+  .breakfast { background-color: #fff3cd; }
+  .lunch { background-color: #d1e7dd; }
+  .dinner { background-color: #f8d7da; }
+
+  .empty {
+    color: #777;
+    font-style: italic;
+  }
+
+  .clear-day {
+    margin-top: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10;
+  }
+
+  .modal-content {
+    background: white;
+    width: 320px;
+    max-height: 80%;
+    overflow-y: auto;
+    margin: 80px auto;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: left;
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .recipe-item {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
+
+  .recipe-item:hover {
+    background: #f0f0f0;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .topActions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MealMajor</h1>
+  <nav>
+    <ul>
+      <li><a href="/">HOME</a></li>
+      <li><a href="recipes.html">RECIPES</a></li>
+      <li><a href="view_mealplan.html">MEAL PLAN</a></li>
+    </ul>
+  </nav>
+  <hr>
+</header>
+
+<!-- =========================
+     WEEKLY MEAL PLANNER
+========================= -->
+<section>
+  <h2>WEEKLY MEAL PLAN</h2>
+  <div id="planner"></div>
+</section>
+
+
+<div id="recipeModal" class="modal">
+  <div class="modal-content">
+    <h3>Select Recipe</h3>
+    <input type="text" id="searchInput" placeholder="Search recipes...">
+    <div id="recipeList"></div>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const meals = ["breakfast","lunch","dinner"];
+
+let plan = {};           
+let allMine = [];
+let allGlobal = [];
+let selectedDay = null;
+let selectedMeal = null;
+
+// Fetch recipes
+async function loadRecipes() {
+  try {
+    const res = await fetch("/recipes/all");
+    const data = await res.json();
+    allMine = data.mine;
+    allGlobal = data.global;
+  } catch (err) {
+    console.error("Failed to load recipes:", err);
+  }
+}
+
+// Render weekly planner
+function renderPlanner() {
+  const container = document.getElementById("planner");
+  container.innerHTML = "";
+
+  days.forEach(day => {
+    const card = document.createElement("div");
+    card.className = "day-card";
+
+    const title = document.createElement("div");
+    title.className = "day-title";
+    title.textContent = day;
+    card.appendChild(title);
+
+    meals.forEach(meal => {
+      const mealDiv = document.createElement("div");
+      mealDiv.className = `meal ${meal}`;
+      const item = plan?.[day]?.[meal];
+
+      mealDiv.innerHTML = item
+        ? `<strong>${meal}</strong><br>${item.title}`
+        : `<strong>${meal}</strong><br><span class="empty">+ Add</span>`;
+
+      // Left click: open recipe selection modal
+      mealDiv.onclick = () => openModal(day, meal);
+
+      // Right click: delete meal from meal plan
+      mealDiv.oncontextmenu = async (e) => {
+        e.preventDefault();
+        if (item && confirm("Remove this meal from the plan?")) {
+          try {
+            await fetch("/plan/delete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ day, meal })
+            });
+
+            // Remove from frontend memory
+            delete plan[day][meal];
+            if (Object.keys(plan[day]).length === 0) delete plan[day];
+
+            renderPlanner();
+          } catch (err) {
+            console.error("Failed to delete meal from plan:", err);
+            alert("Could not delete meal. Try again.");
+          }
+        }
+      };
+
+      card.appendChild(mealDiv);
+    });
+
+    // Clear entire day
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "clear-day";
+    clearBtn.textContent = "Clear Day";
+    clearBtn.onclick = async () => {
+      if (confirm(`Clear all meals for ${day}?`)) {
+        try {
+          await fetch("/plan/clear-day", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ day })
+          });
+
+          delete plan[day];
+          renderPlanner();
+        } catch (err) {
+          console.error("Failed to clear day:", err);
+          alert("Could not clear day. Try again.");
+        }
+      }
+    };
+    card.appendChild(clearBtn);
+
+    container.appendChild(card);
+  });
+}
+function openModal(day, meal) {
+  selectedDay = day;
+  selectedMeal = meal;
+
+  document.getElementById("recipeModal").style.display = "block";
+  document.getElementById("searchInput").value = "";
+
+  const recipes = [...allMine, ...allGlobal];
+  renderRecipeList(recipes);
+}
+
+function closeModal() {
+  document.getElementById("recipeModal").style.display = "none";
+}
+
+// Render recipe list in modal
+function renderRecipeList(list) {
+  const container = document.getElementById("recipeList");
+  container.innerHTML = "";
+
+  list.forEach(r => {
+    const item = document.createElement("div");
+    item.className = "recipe-item";
+    item.textContent = r.title;
+
+    // Click handler to add recipe to the plan AND save to database
+    item.onclick = async () => {
+      // --- DUPLICATE CHECK ---
+      // Check if this recipe ID already exists anywhere in the current plan
+      const isDuplicate = Object.values(plan).some(dayMeals => 
+        Object.values(dayMeals).some(meal => String(meal.id) === String(r.id))
+      );
+
+      if (isDuplicate) {
+        const proceed = confirm(`"${r.title}" is already in your plan for this week. Do you want to add it again?`);
+        if (!proceed) return; // Exit if user cancels
+      }
+      // --- END DUPLICATE CHECK ---
+
+      // 1. Update in-memory plan
+      if (!plan[selectedDay]) plan[selectedDay] = {};
+      plan[selectedDay][selectedMeal] = r;
+
+      try {
+        // 2. Save to database
+        const response = await fetch("/plan/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            day: selectedDay,
+            meal: selectedMeal,
+            recipeId: r.id
+          })
+        });
+
+        if (!response.ok) throw new Error("Server failed to save");
+
+        console.log("Saving meal:", { day: selectedDay, meal: selectedMeal, recipeId: r.id });
+        
+        // 3. Update UI and close modal
+        renderPlanner();
+        closeModal();
+
+      } catch (err) {
+        console.error("Failed to save meal:", err);
+        alert("Could not save meal. Please try again.");
+        
+        // Rollback local change if server fails
+        delete plan[selectedDay][selectedMeal];
+      }
+    };
+
+    container.appendChild(item);
+  });
+}
+
+// Search recipes
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+  const recipes = [...allMine, ...allGlobal];
+  
+  // Filter and re-render the list based on search query
+  const filtered = recipes.filter(r => r.title.toLowerCase().includes(query));
+  renderRecipeList(filtered);
+});
+async function loadMealPlan() {
+  try {
+    const res = await fetch("/plan");
+    const data = await res.json();
+
+    // Clear current plan
+    plan = {};
+
+    // Map recipe IDs to actual recipe objects from allMine + allGlobal
+    const allRecipes = [...allMine, ...allGlobal];
+
+    data.meals.forEach(m => {
+      const recipe = allRecipes.find(r => r.id == m.recipe_id);
+      if (recipe) {
+        if (!plan[m.day]) plan[m.day] = {};
+        plan[m.day][m.meal] = recipe;
+      }
+    });
+  } catch (err) {
+    console.error("Failed to load meal plan:", err);
+  }
+}
+
+// Initialize
+async function init() {
+  await loadRecipes();    // Get the list of all available recipes
+  await loadMealPlan();   // Get the user's saved weekly plan
+  renderPlanner();        // Draw the UI with the data
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Recipe</title>
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh; /* IMPORTANT */
+      background-image: url('images/background.avif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed; /* 👈 key line */
+
+    }
+
+    header {
+      background-color: #e7b262;
+      color: white;
+      text-align: center;
+      padding: 18px 10px 10px;
+    }
+
+    header h1 {
+      width: 400px;
+      height: 120px;
+      margin: 0 auto;
+      background-image: url('images/logo.png');
+      background-size: 100px 100px;
+      background-repeat: no-repeat;
+      background-position: left center;
+      padding-left: 70px;
+      font-size: 52px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+      line-height: 120px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 8px;
+    }
+
+    nav li {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    nav button:hover {
+      text-decoration: underline;
+      color: #ffeb3b;
+    }
+
+    header hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.35);
+      margin: 12px auto 0;
+      width: min(900px,92%);
+    }
+
+    main {
+      text-align: center;
+      margin-top: 30px;
+      padding: 0 14px 40px;
+    }
+
+    .box {
+      display: inline-block;
+      text-align: left;
+      margin-top: 14px;
+      width: min(650px,92vw);
+      background-color: #ffffff0a;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    .section {
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+
+    .section:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.12);
+      outline: none;
+      font-family: Georgia, serif;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .flex {
+      display: flex;
+      gap: 10px;
+    }
+
+    .flex > div {
+      flex: 1;
+    }
+
+    .tagWrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 999px;
+      font-size: 14px;
+      background: rgba(255,255,255,.18);
+    }
+
+    .tag button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .tag button:hover {
+      color: #ffeb3b;
+    }
+
+    .addLine {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .addLine input {
+      flex: 1;
+    }
+
+    .addLine button,
+    .actions button {
+      background-color: #e7b262;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .addLine button:hover,
+    .actions button:hover {
+      background-color: #ffeb3b;
+      color: #333;
+    }
+
+    .actions {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #msg {
+      margin-top: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>MealMajor</h1>
+
+    <nav>
+      <ul>
+        <li><button onclick="window.location.href='/'">Home</button></li>
+        <li><button disabled>Create</button></li>
+        <li><button onclick="window.location.href='recipes.html'">My Recipes</button></li>
+        <li><button onclick="window.location.href='account.html'">Account</button></li>
+      </ul>
+    </nav>
+
+    <hr />
+  </header>
+
+  <main>
+    <div class="box">
+      <div class="section">
+        <label>Recipe Name</label>
+        <input type="text" id="title" />
+      </div>
+
+      <div class="section">
+        <label>Description</label>
+        <textarea rows="3" id="description"></textarea>
+      </div>
+
+      <div class="section flex">
+        <div>
+          <label>Prep Time (min)</label>
+          <input type="number" id="prepTime" />
+        </div>
+        <div>
+          <label>Cook Time (min)</label>
+          <input type="number" id="cookTime" />
+        </div>
+        <div>
+          <label>Cost ($)</label>
+          <input type="number" step="0.01" id="cost" />
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Ingredients</label>
+        <div class="tagWrap" id="ingredients"></div>
+
+        <div class="addLine">
+          <input type="number" id="ingredientQty" placeholder="Qty" style="max-width:90px;" />
+          <select id="ingredientUnit" style="max-width:110px;">
+            <option value="">Unit</option>
+            <option>g</option>
+            <option>kg</option>
+            <option>ml</option>
+            <option>L</option>
+            <option>tsp</option>
+            <option>tbsp</option>
+            <option>cups</option>
+          </select>
+          <input type="text" id="ingredientName" placeholder="Ingredient name" />
+          <button type="button" onclick="addIngredient()">Add</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Preparation Steps</label>
+        <div class="tagWrap" id="steps"></div>
+
+        <div class="addLine">
+          <input type="text" id="stepInput" placeholder="Add step" />
+          <button type="button" onclick="addStep()">Add</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Dietary Tags</label>
+        <div class="tagWrap" id="dietaryTags"></div>
+
+        <div class="addLine">
+          <input type="text" id="dietaryInput" placeholder="e.g. vegan, gluten-free" />
+          <button type="button" onclick="addDietaryTag()">Add</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="saveRecipe()">Save Recipe</button>
+        <div id="msg"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function createTag(text, container) {
+      const tag = document.createElement("div");
+      tag.className = "tag";
+      tag.innerHTML = `${text} <button type="button" onclick="this.parentElement.remove()">✕</button>`;
+      container.appendChild(tag);
+    }
+
+    function addIngredient() {
+      const qty = document.getElementById("ingredientQty").value;
+      const unit = document.getElementById("ingredientUnit").value;
+      const name = document.getElementById("ingredientName").value;
+
+      if (name.trim() !== "") {
+        let text = "";
+        if (qty) text += qty + " ";
+        if (unit) text += unit + " ";
+        text += name;
+
+        createTag(text, document.getElementById("ingredients"));
+
+        document.getElementById("ingredientQty").value = "";
+        document.getElementById("ingredientUnit").value = "";
+        document.getElementById("ingredientName").value = "";
+      }
+    }
+
+    function addStep() {
+      const input = document.getElementById("stepInput");
+      if (input.value.trim() !== "") {
+        createTag(input.value, document.getElementById("steps"));
+        input.value = "";
+      }
+    }
+
+    function addDietaryTag() {
+      const input = document.getElementById("dietaryInput");
+      if (input.value.trim() !== "") {
+        createTag(input.value.trim(), document.getElementById("dietaryTags"));
+        input.value = "";
+      }
+    }
+
+    function getTagsText(containerId) {
+      const container = document.getElementById(containerId);
+      return Array.from(container.querySelectorAll(".tag"))
+        .map(tag => tag.textContent.replace("✕", "").trim())
+        .filter(Boolean);
+    }
+
+    async function saveRecipe() {
+      const msg = document.getElementById("msg");
+
+      const payload = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        prepTime: document.getElementById("prepTime").value,
+        cookTime: document.getElementById("cookTime").value,
+        cost: document.getElementById("cost").value,
+        ingredients: getTagsText("ingredients"),
+        steps: getTagsText("steps"),
+        dietaryTags: getTagsText("dietaryTags")
+      };
+
+      try {
+        const res = await fetch("/recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+          msg.style.color = "red";
+          msg.innerText = (data && data.message) || "Failed to save recipe";
+          return;
+        }
+
+        msg.style.color = "green";
+        msg.innerText = "Recipe saved!";
+      } catch (e) {
+        console.error(e);
+        msg.style.color = "red";
+        msg.innerText = "Server error while saving";
+      }
+    }
+  </script>
+</body>
+</html>

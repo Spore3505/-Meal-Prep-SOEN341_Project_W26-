@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style_login_register_home.css">
+  <style>
+    header { text-align: center; }
+    nav ul { list-style: none; padding: 0; }
+    nav li { display: inline; margin: 0 10px; }
+    section { text-align: center; margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>MealMajor</h1>
+
+  <nav>
+    <ul>
+      <li><a href="/">HOME</a></li>
+      <li><a id="authLink" href="login.html">LOGIN</a></li>
+    </ul>
+  </nav>
+
+  <hr>
+</header>
+
+<section>
+  <h2>LOGIN</h2>
+
+  <h3>Please enter your username and password</h3>
+
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Username" required><br><br>
+    <input type="password" id="password" placeholder="Password" required><br><br>
+    <button type="submit">LOGIN</button>
+  </form>
+
+  <br>
+  <span>If you don’t have an account, please <a href="register.html">Register</a></span>
+</section>
+
+<script>
+  // =========================
+  // Check if already logged in
+  // =========================
+  (async function () {
+    try {
+      const res = await fetch("/me");
+      const data = await res.json();
+
+      const authLink = document.getElementById("authLink");
+
+      if (data.loggedIn) {
+        // Change nav to ACCOUNT
+        if (authLink) {
+          authLink.textContent = "ACCOUNT";
+          authLink.href = "account.html"; // or recipes.html
+        }
+
+        // Redirect automatically
+        window.location.href = "recipes.html"; // or account.html
+      } else {
+        if (authLink) {
+          authLink.textContent = "LOGIN";
+          authLink.href = "login.html";
+        }
+      }
+    } catch (e) {
+      console.error("Session check failed:", e);
+    }
+  })();
+
+  // =========================
+  // Login form submit
+  // =========================
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (response.ok) {
+        window.location.href = "recipes.html";
+      } else {
+        alert("Wrong username or password");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
+  });
+</script>
+
+</body>
+
+</html>
+
+
+
