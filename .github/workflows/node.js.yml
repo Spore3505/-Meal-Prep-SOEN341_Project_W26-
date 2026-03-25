@@ -4,12 +4,12 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "Sprint2/**"
+      - "Sprint3/**"
       - ".github/workflows/**"
   pull_request:
     branches: ["main"]
     paths:
-      - "Sprint2/**"
+      - "Sprint3/**"
       - ".github/workflows/**"
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: Sprint2
+        working-directory: Sprint3
 
     steps:
       - name: Checkout
