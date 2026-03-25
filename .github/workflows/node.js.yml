@@ -1,4 +1,4 @@
-name: Sprint2 CI
+name: Sprint3 CI
 
 on:
   push:
