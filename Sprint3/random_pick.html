@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pick a Recipe – MealMajor</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-image: url('images/background.avif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    /* ── Header (same as all other pages) ── */
+    header {
+      background-color: #e7b262;
+      color: white;
+      text-align: center;
+      padding: 18px 10px 10px;
+    }
+
+    header h1 {
+      width: 400px;
+      height: 120px;
+      margin: 0 auto;
+      background-image: url('images/logo.png');
+      background-size: 100px 100px;
+      background-repeat: no-repeat;
+      background-position: left center;
+      padding-left: 70px;
+      font-size: 52px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+      line-height: 120px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 8px;
+    }
+
+    nav li { display: inline-block; margin: 0 10px; }
+
+    nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    nav button:hover { text-decoration: underline; color: #ffeb3b; }
+    nav button:disabled { opacity: .85; }
+
+    header hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.35);
+      margin: 12px auto 0;
+      width: min(900px, 92%);
+    }
+
+    /* ── Main layout ── */
+    main {
+      text-align: center;
+      margin-top: 30px;
+      padding: 0 14px 60px;
+    }
+
+    .box {
+      display: inline-block;
+      text-align: left;
+      margin-top: 14px;
+      width: min(600px, 92vw);
+      background-color: #ffffff0a;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px;
+      padding: 28px 28px 22px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    h2.page-title {
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,.5);
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,.8);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    /* ── Quiz ── */
+    #quiz { }
+
+    .question-block {
+      margin-bottom: 22px;
+    }
+
+    .question-block p {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,.4);
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .option-btn {
+      padding: 8px 16px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: Georgia, serif;
+      transition: all .15s;
+    }
+
+    .option-btn:hover {
+      border-color: #e7b262;
+      background: rgba(231,178,98,.25);
+    }
+
+    .option-btn.selected {
+      background: #e7b262;
+      border-color: #e7b262;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #e7b262;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: Georgia, serif;
+      transition: background .15s;
+    }
+
+    .btn:hover { background: #d4a056; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      color: #fff;
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,.28); }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    /* ── Recipe card ── */
+    #recipeResult { display: none; }
+
+    .recipe-card {
+      background: rgba(255,255,255,.95);
+      border-radius: 12px;
+      padding: 20px;
+      color: #333;
+    }
+
+    .recipe-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: #222;
+    }
+
+    .recipe-card .meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .recipe-card .meta span::before { margin-right: 4px; }
+
+    .tag {
+      display: inline-block;
+      background: #ffd27f;
+      color: #333;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 3px 3px 0;
+      font-size: 13px;
+    }
+
+    .recipe-card ul {
+      margin: 6px 0 12px 18px;
+      padding: 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .recipe-card h4 { margin: 12px 0 4px; color: #555; font-size: 15px; }
+
+    /* ── Status message ── */
+    #msg {
+      margin-top: 14px;
+      font-weight: bold;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .msg-ok  { color: #2e7d32; }
+    .msg-err { color: #c62828; }
+    .msg-info { color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,.4); }
+
+    /* ── Seen counter ── */
+    #seenNote {
+      font-size: 13px;
+      color: rgba(255,255,255,.65);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>MealMajor</h1>
+  <nav>
+    <ul>
+      <li><button onclick="window.location.href='/'">Home</button></li>
+      <li><button onclick="window.location.href='create.html'">Create</button></li>
+      <li><button onclick="window.location.href='recipes.html'">My Recipes</button></li>
+      <li><button onclick="window.location.href='view_mealplan.html'">Meal Plan</button></li>
+      <li><button onclick="window.location.href='account.html'">Account</button></li>
+    </ul>
+  </nav>
+  <hr>
+</header>
+
+<main>
+  <h2 class="page-title">🎲 Pick a Recipe For Me</h2>
+  <p class="subtitle">Answer 5 quick questions and we'll find you something to cook!</p>
+
+  <div class="box">
+
+    <!-- ── QUIZ SECTION ── -->
+    <div id="quiz">
+
+      <!-- Q1 -->
+      <div class="question-block">
+        <p>1. How much time do you have to cook?</p>
+        <div class="options" data-q="time">
+          <button class="option-btn" data-value="quick" onclick="select(this)">⚡ Under 15 min</button>
+          <button class="option-btn" data-value="medium" onclick="select(this)">🕐 15–30 min</button>
+          <button class="option-btn" data-value="long" onclick="select(this)">🍳 30+ min</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question-block">
+        <p>2. What kind of meal are you in the mood for?</p>
+        <div class="options" data-q="type">
+          <button class="option-btn" data-value="vegetarian" onclick="select(this)">🥗 Vegetarian</button>
+          <button class="option-btn" data-value="vegan" onclick="select(this)">🌱 Vegan</button>
+          <button class="option-btn" data-value="protein" onclick="select(this)">💪 High Protein</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-block">
+        <p>3. Do you want it spicy?</p>
+        <div class="options" data-q="spicy">
+          <button class="option-btn" data-value="spicy" onclick="select(this)">🌶️ Yes, bring the heat!</button>
+          <button class="option-btn" data-value="mild" onclick="select(this)">😌 No, keep it mild</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="question-block">
+        <p>4. What's your budget per serving?</p>
+        <div class="options" data-q="cost">
+          <button class="option-btn" data-value="cheap" onclick="select(this)">💰 Under $5</button>
+          <button class="option-btn" data-value="moderate" onclick="select(this)">💵 $5–$8</button>
+          <button class="option-btn" data-value="splurge" onclick="select(this)">💎 $8+</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-block">
+        <p>5. Any dietary requirement?</p>
+        <div class="options" data-q="dietary">
+          <button class="option-btn" data-value="gluten-free" onclick="select(this)">🌾 Gluten-Free</button>
+          <button class="option-btn" data-value="dairy-free" onclick="select(this)">🥛 Dairy-Free</button>
+          <button class="option-btn" data-value="halal" onclick="select(this)">☪️ Halal</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 None / Don't care</button>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="findRecipe()">🎲 Find Me a Recipe!</button>
+        <button class="btn btn-secondary" onclick="resetQuiz()">↺ Reset</button>
+      </div>
+
+      <div id="msg"></div>
+      <div id="seenNote"></div>
+    </div>
+
+    <!-- ── RESULT SECTION ── -->
+    <div id="recipeResult">
+      <div class="recipe-card" id="recipeCard"></div>
+
+      <div class="btn-row">
+        <button class="btn" id="saveBtn" onclick="saveRecipe()">💾 Save to My Collection</button>
+        <button class="btn btn-secondary" onclick="tryAnother()">🔀 Try Another</button>
+        <button class="btn btn-secondary" onclick="backToQuiz()">← Change Answers</button>
+      </div>
+
+      <div id="msg"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // ── State ──
+  let allRecipes   = [];
+  let myRecipes    = [];
+  let answers      = {};           // { time, type, spicy, cost, dietary }
+  let currentRecipe = null;
+  let seenIds      = new Set();    // IDs shown this session — avoid repeats
+
+  // ── Helpers ──
+  function esc(s) {
+    return String(s ?? "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function showMsg(text, type = "info") {
+    const el = document.getElementById("msg");
+    el.className = "msg-" + type;
+    el.textContent = text;
+  }
+
+  function clearMsg() {
+    const el = document.getElementById("msg");
+    el.className = "";
+    el.textContent = "";
+  }
+
+  // ── Load recipes from server ──
+  async function loadRecipes() {
+    const res  = await fetch("/recipes/all");
+    const data = await res.json();
+    myRecipes  = data.mine   || [];
+    allRecipes = [...(data.mine || []), ...(data.global || [])];
+  }
+
+  // ── Quiz selection ──
+  function select(btn) {
+    const group = btn.closest(".options");
+    group.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const q = group.dataset.q;
+    answers[q] = btn.dataset.value;
+  }
+
+  function resetQuiz() {
+    answers = {};
+    seenIds.clear();
+    document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+    clearMsg();
+    document.getElementById("seenNote").textContent = "";
+    document.getElementById("recipeResult").style.display = "none";
+    document.getElementById("quiz").style.display = "block";
+  }
+
+  function backToQuiz() {
+    document.getElementById("recipeResult").style.display = "none";
+    document.getElementById("quiz").style.display = "block";
+    clearMsg();
+  }
+
+  // ── Filtering logic (UT.14.2 + UT.14.3) ──
+  function applyFilters(recipes) {
+    return recipes.filter(r => {
+
+      const tags        = (r.dietaryTags || []).map(t => t.toLowerCase());
+      const totalTime   = (r.prepTime || 0) + (r.cookTime || 0);
+      const cost        = r.cost || 0;
+
+      // Q1 – time
+      if (answers.time && answers.time !== "any") {
+        if (answers.time === "quick"  && totalTime > 15) return false;
+        if (answers.time === "medium" && (totalTime <= 15 || totalTime > 30)) return false;
+        if (answers.time === "long"   && totalTime <= 30) return false;
+      }
+
+      // Q2 – meal type
+      if (answers.type && answers.type !== "any") {
+        if (answers.type === "vegetarian" && !tags.includes("vegetarian")) return false;
+        if (answers.type === "vegan"      && !tags.includes("vegan"))      return false;
+        if (answers.type === "protein"    && !tags.includes("high-protein"))return false;
+      }
+
+      // Q3 – spicy (spicy tag or chili/jalapeño/sriracha in ingredients)
+      if (answers.spicy && answers.spicy !== "any") {
+        const isSpicy =
+          tags.some(t => t.includes("spic") || t.includes("hot")) ||
+          (r.ingredients || []).some(i =>
+            /chili|jalape|sriracha|cayenne|spicy/i.test(i)
+          );
+
+        if (answers.spicy === "spicy" && !isSpicy) return false;
+        if (answers.spicy === "mild"  && isSpicy)  return false;
+      }
+
+      // Q4 – cost
+      if (answers.cost && answers.cost !== "any") {
+        if (answers.cost === "cheap"    && cost >= 5)  return false;
+        if (answers.cost === "moderate" && (cost < 5 || cost > 8)) return false;
+        if (answers.cost === "splurge"  && cost <= 8)  return false;
+      }
+
+      // Q5 – dietary requirement
+      if (answers.dietary && answers.dietary !== "any") {
+        if (!tags.includes(answers.dietary)) return false;
+      }
+
+      return true;
+    });
+  }
+
+  // ── Find & display recipe (UT.14.4) ──
+  async function findRecipe() {
+    clearMsg();
+
+    // Validate all 5 questions answered
+    const required = ["time","type","spicy","cost","dietary"];
+    const missing  = required.filter(q => !answers[q]);
+    if (missing.length) {
+      showMsg("Please answer all 5 questions first!", "err");
+      return;
+    }
+
+    await loadRecipes();
+
+    const filtered = applyFilters(allRecipes);
+
+    // Exclude already-seen recipes this session
+    const unseen = filtered.filter(r => !seenIds.has(String(r.id)));
+
+    if (!unseen.length) {
+      if (filtered.length) {
+        // All matching ones have been shown — reset seen and try again
+        seenIds.clear();
+        const fresh = filtered.filter(r => !seenIds.has(String(r.id)));
+        if (!fresh.length) {
+          showMsg("No recipes match your filters. Try relaxing some answers!", "err");
+          return;
+        }
+        pickAndShow(fresh, filtered.length);
+      } else {
+        showMsg("No recipes match your filters. Try changing some answers!", "err");
+      }
+      return;
+    }
+
+    pickAndShow(unseen, filtered.length);
+  }
+
+  function pickAndShow(pool, totalMatches) {
+    // Random pick from filtered pool
+    currentRecipe = pool[Math.floor(Math.random() * pool.length)];
+    seenIds.add(String(currentRecipe.id));
+
+    renderRecipeCard(currentRecipe);
+
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("recipeResult").style.display = "block";
+
+    clearMsg();
+
+    // Update seen counter in quiz area
+    const note = document.getElementById("seenNote");
+    note.textContent = `Shown ${seenIds.size} of ${totalMatches} matching recipe(s) this session.`;
+  }
+
+  function renderRecipeCard(r) {
+    const tags        = (r.dietaryTags || []);
+    const totalTime   = (r.prepTime || 0) + (r.cookTime || 0);
+    const alreadyMine = myRecipes.some(
+      m => m.title.trim().toLowerCase() === r.title.trim().toLowerCase()
+    );
+
+    const saveBtn = document.getElementById("saveBtn");
+    if (alreadyMine) {
+      saveBtn.textContent = "✅ Already in My Collection";
+      saveBtn.disabled = true;
+    } else {
+      saveBtn.textContent = "💾 Save to My Collection";
+      saveBtn.disabled = false;
+    }
+
+    document.getElementById("recipeCard").innerHTML = `
+      <h3>${esc(r.title)}</h3>
+      <p style="color:#555; margin:0 0 10px;">${esc(r.description || "")}</p>
+
+      <div class="meta">
+        <span>⏱ ${totalTime} min</span>
+        <span>💰 $${Number(r.cost || 0).toFixed(2)}</span>
+        ${r.isGlobal ? '<span>🌍 Global recipe</span>' : '<span>👤 My recipe</span>'}
+      </div>
+
+      <div>
+        ${tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}
+      </div>
+
+      <h4>Ingredients</h4>
+      <ul>
+        ${(r.ingredients || []).map(i => `<li>${esc(i)}</li>`).join("")}
+      </ul>
+
+      <h4>Steps</h4>
+      <ul>
+        ${(r.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}
+      </ul>
+    `;
+  }
+
+  // ── Try another (skip current, pick next unseen) ──
+  function tryAnother() {
+    clearMsg();
+    const filtered = applyFilters(allRecipes);
+    const unseen   = filtered.filter(r => !seenIds.has(String(r.id)));
+
+    if (!unseen.length) {
+      // Wrap around: reset seen except the very last one shown
+      const keepId = currentRecipe ? String(currentRecipe.id) : null;
+      seenIds.clear();
+      if (keepId) seenIds.add(keepId);
+
+      const fresh = filtered.filter(r => !seenIds.has(String(r.id)));
+      if (!fresh.length) {
+        showMsg("You've seen all matching recipes! Change your answers to see more.", "err");
+        return;
+      }
+      pickAndShow(fresh, filtered.length);
+      return;
+    }
+
+    pickAndShow(unseen, filtered.length);
+  }
+
+  // ── Save to my collection (duplicate check) ──
+  async function saveRecipe() {
+    if (!currentRecipe) return;
+    clearMsg();
+
+    // Duplicate check by title (case-insensitive)
+    const isDuplicate = myRecipes.some(
+      r => r.title.trim().toLowerCase() === currentRecipe.title.trim().toLowerCase()
+    );
+
+    if (isDuplicate) {
+      showMsg("⚠️ This recipe is already in your collection!", "err");
+      document.getElementById("saveBtn").disabled = true;
+      document.getElementById("saveBtn").textContent = "✅ Already in My Collection";
+      return;
+    }
+
+    try {
+      const res = await fetch("/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title:       currentRecipe.title,
+          description: currentRecipe.description || "",
+          prepTime:    currentRecipe.prepTime || 0,
+          cookTime:    currentRecipe.cookTime || 0,
+          cost:        currentRecipe.cost || 0,
+          ingredients: currentRecipe.ingredients || [],
+          steps:       currentRecipe.steps || [],
+          dietaryTags: currentRecipe.dietaryTags || []
+        })
+      });
+
+      if (!res.ok) throw new Error("Server error");
+
+      showMsg("✅ Recipe saved to your collection!", "ok");
+
+      document.getElementById("saveBtn").textContent = "✅ Saved!";
+      document.getElementById("saveBtn").disabled = true;
+
+      // Add to local myRecipes so duplicate check works for rest of session
+      myRecipes.push(currentRecipe);
+
+    } catch (err) {
+      console.error(err);
+      showMsg("❌ Failed to save. Please try again.", "err");
+    }
+  }
+
+  // ── Init: pre-load recipes on page load ──
+  loadRecipes().catch(console.error);
+</script>
+
+</body>
+</html>
