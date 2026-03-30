@@ -68,3 +68,75 @@ html, body {
           margin: 12px auto 0;
           width: min(900px,92%);
         }
+ main {
+          text-align: center;
+          margin-top: 30px;
+          padding: 0 14px 40px;
+        }
+
+        .box {
+          display: inline-block;
+          text-align: left;
+          margin-top: 14px;
+          width: min(650px,92vw);
+          background-color: #ffffff0a;
+          backdrop-filter: blur(6px);
+          border: 1px solid rgba(255,255,255,.22);
+          border-radius: 14px;
+          padding: 22px;
+          box-shadow: 0 10px 25px rgba(0,0,0,.18);
+        }
+
+        .section {
+          margin-top: 18px;
+          padding-top: 10px;
+          border-top: 1px solid rgba(255,255,255,.18);
+        }
+
+        .section:first-child {
+          border-top: none;
+          padding-top: 0;
+        }
+
+        label {
+          font-weight: bold;
+          display: block;
+          margin-bottom: 6px;
+        }
+
+        input, textarea, select {
+          width: 100%;
+          padding: 9px 10px;
+          border-radius: 10px;
+          border: 1px solid rgba(255,255,255,.28);
+          background: rgba(255,255,255,.12);
+          outline: none;
+          font-family: Georgia, serif;
+        }
+
+        textarea { resize: vertical; }
+
+        .flex {
+          display: flex;
+          gap: 10px;
+        }
+
+        .flex > div { flex: 1; }
+
+        .tagWrap {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 10px;
+          border: 1px solid rgba(255,255,255,.28);
+          border-radius: 999px;
+          font-size: 14px;
+          background: rgba(255,255,255,.18);
+        }
