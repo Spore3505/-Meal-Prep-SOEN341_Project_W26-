@@ -171,5 +171,67 @@ html, body {
       flex-wrap: wrap;
       margin-top: 18px;
     }
+ #recipeResult { display: none; }
 
+    .recipe-card {
+      background: rgba(255,255,255,.95);
+      border-radius: 12px;
+      padding: 20px;
+      color: #333;
+    }
+
+    .recipe-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: #222;
+    }
+
+    .recipe-card .meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .recipe-card .meta span::before { margin-right: 4px; }
+
+    .tag {
+      display: inline-block;
+      background: #ffd27f;
+      color: #333;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 3px 3px 0;
+      font-size: 13px;
+    }
+
+    .recipe-card ul {
+      margin: 6px 0 12px 18px;
+      padding: 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .recipe-card h4 { margin: 12px 0 4px; color: #555; font-size: 15px; }
+
+    /* ── Status message ── */
+    #msg {
+      margin-top: 14px;
+      font-weight: bold;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .msg-ok  { color: #2e7d32; }
+    .msg-err { color: #c62828; }
+    .msg-info { color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,.4); }
+
+    /* ── Seen counter ── */
+    #seenNote {
+      font-size: 13px;
+      color: rgba(255,255,255,.65);
+      margin-top: 6px;
+    }
 
