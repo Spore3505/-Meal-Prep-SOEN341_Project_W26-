@@ -165,3 +165,18 @@ html, body {
             text-align: center;
             margin-top: 12px;
         }
+ .login-link a {
+            color: #333;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        #msg {
+            margin-top: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
