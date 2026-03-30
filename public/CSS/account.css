@@ -119,3 +119,76 @@ main p {
   gap: 8px;
   margin-top: 10px;
 }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  font-size: 14px;
+  background: rgba(255,255,255,.12);
+}
+
+.tag button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.tag button:hover {
+  color: #ffeb3b;
+}
+
+.addLine {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.addLine input {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.12);
+  outline: none;
+}
+
+.addLine button,
+.actions button,
+footer button {
+  background-color: #e7b262;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.addLine button:hover,
+.actions button:hover,
+footer button:hover {
+  background-color: #ffeb3b;
+  color: #333;
+}
+
+.actions {
+  text-align: center;
+  margin-top: 18px;
+}
+
+#msg {
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+footer {
+  text-align: center;
+  margin-top: 22px;
+  padding-bottom: 25px;
+}
