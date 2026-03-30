@@ -83,3 +83,85 @@ html, body {
             margin-top: 30px;
             padding: 0 14px 40px;
         }
+
+        .box {
+            display: inline-block;
+            text-align: left;
+            margin-top: 14px;
+            width: min(650px,92vw);
+            background-color: #ffffff0a;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,.22);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.18);
+        }
+
+        /* SECTIONS */
+
+        .section {
+            margin-top: 18px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,.18);
+        }
+
+        .section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.28);
+            background: rgba(255,255,255,.12);
+            outline: none;
+            font-family: Georgia, serif;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .checkbox-grid label {
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .actions button {
+            background-color: #e7b262;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .actions button:hover {
+            background-color: #ffeb3b;
+            color: #333;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 12px;
+        }
