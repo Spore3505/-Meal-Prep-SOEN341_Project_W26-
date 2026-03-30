@@ -54,5 +54,122 @@ html, body {
       font-weight: bold;
       cursor: pointer;
       font-size: 16px;
+    }nav button:hover { text-decoration: underline; color: #ffeb3b; }
+    nav button:disabled { opacity: .85; }
+
+    header hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.35);
+      margin: 12px auto 0;
+      width: min(900px, 92%);
     }
+
+    /* ── Main layout ── */
+    main {
+      text-align: center;
+      margin-top: 30px;
+      padding: 0 14px 60px;
+    }
+
+    .box {
+      display: inline-block;
+      text-align: left;
+      margin-top: 14px;
+      width: min(600px, 92vw);
+      background-color: #ffffff0a;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px;
+      padding: 28px 28px 22px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    h2.page-title {
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,.5);
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,.8);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    /* ── Quiz ── */
+    #quiz { }
+
+    .question-block {
+      margin-bottom: 22px;
+    }
+
+    .question-block p {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,.4);
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+ .option-btn {
+      padding: 8px 16px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: Georgia, serif;
+      transition: all .15s;
+    }
+
+    .option-btn:hover {
+      border-color: #e7b262;
+      background: rgba(231,178,98,.25);
+    }
+
+    .option-btn.selected {
+      background: #e7b262;
+      border-color: #e7b262;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #e7b262;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: Georgia, serif;
+      transition: background .15s;
+    }
+
+    .btn:hover { background: #d4a056; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      color: #fff;
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,.28); }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
 
