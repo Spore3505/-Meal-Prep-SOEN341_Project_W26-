@@ -140,3 +140,47 @@ html, body {
           font-size: 14px;
           background: rgba(255,255,255,.18);
         }
+ .tag button {
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          font-size: 14px;
+        }
+
+        .tag button:hover { color: #ffeb3b; }
+
+        .addLine {
+          display: flex;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .addLine input { flex: 1; }
+
+        .addLine button,
+        .actions button {
+          background-color: #e7b262;
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          padding: 9px 12px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        .addLine button:hover,
+        .actions button:hover {
+          background-color: #ffeb3b;
+          color: #333;
+        }
+
+        .actions {
+          text-align: center;
+          margin-top: 20px;
+        }
+
+        #msg {
+          margin-top: 12px;
+          font-weight: bold;
+          text-align: center;
+        }
