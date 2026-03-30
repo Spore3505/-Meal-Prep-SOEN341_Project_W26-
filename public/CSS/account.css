@@ -4,4 +4,118 @@ html, body {
   margin: 0;
   padding: 0;
 }
+body {
+  min-height: 100vh; /* IMPORTANT */
+  background-image: url('images/background.avif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+}
 
+header {
+  background-color: #e7b262;
+  color: white;
+  text-align: center;
+  padding: 18px 10px 10px;
+}
+
+header h1 {
+  width: 400px;
+  height: 120px;
+  margin: 0 auto;
+  background-image: url('images/logo.png');
+  background-size: 100px 100px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 70px;
+  font-size: 52px;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+  text-align: center;
+  line-height: 120px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 8px;
+}
+
+nav li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+nav button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+nav button:hover {
+  text-decoration: underline;
+  color: #ffeb3b;
+}
+
+nav button:disabled {
+  opacity: .85;
+}
+
+header hr {
+  border: 0;
+  border-top: 1px solid rgba(255,255,255,.35);
+  margin: 12px auto 0;
+  width: min(900px,92%);
+}
+
+main {
+  text-align: center;
+  margin-top: 30px;
+  padding: 0 14px 40px;
+}
+
+main p {
+  margin: 0 0 10px;
+}
+
+.box {
+  display: inline-block;
+  text-align: left;
+  margin-top: 14px;
+  width: min(520px,92vw);
+  background-color: #ffffff0a;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.18);
+}
+
+.section {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.18);
+}
+
+.section:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.row {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.tagWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
