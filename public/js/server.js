@@ -266,3 +266,345 @@ app.get("/recipes", requireAuth, async (req, res) => {
         isGlobal: false,
       });
     }
+    
+
+    res.json(out);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading recipes");
+  }
+});
+
+/* =========================
+   GLOBAL RECIPES (SQL)
+   ========================= */
+
+// Get global recipes
+app.get("/recipes/global", requireAuth, async (req, res) => {
+  try {
+    const rows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE is_global = 1
+       ORDER BY id DESC`
+    );
+
+    const out = [];
+    for (const r of rows) {
+      const ingredients = (
+        await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+          r.id,
+        ])
+      ).map((x) => x.ingredient);
+
+      const steps = (
+        await all(
+          `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+          [r.id]
+        )
+      ).map((x) => x.step_text);
+
+      const dietaryTags = (
+        await all(`SELECT tag FROM recipe_tags WHERE recipe_id = ? ORDER BY tag`, [
+          r.id,
+        ])
+      ).map((x) => x.tag);
+
+      out.push({
+        id: "g" + String(r.id),
+        title: r.title,
+        description: r.description || "",
+        prepTime: r.prep_time,
+        cookTime: r.cook_time,
+        cost: r.cost,
+        ingredients,
+        steps,
+        dietaryTags,
+        createdAt: r.created_at,
+        isGlobal: true,
+      });
+    }
+
+    res.json(out);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading global recipes");
+  }
+});
+
+// Get both: mine + global
+app.get("/recipes/all", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    const mineRows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE owner_user_id = ? AND is_global = 0
+       ORDER BY id DESC`,
+      [userId]
+    );
+
+    const globalRows = await all(
+      `SELECT id, title, description, prep_time, cook_time, cost, created_at
+       FROM recipes
+       WHERE is_global = 1
+       ORDER BY id DESC`
+    );
+
+    async function hydrate(rows, isGlobal) {
+      const out = [];
+
+      for (const r of rows) {
+        const ingredients = (
+          await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+            r.id,
+          ])
+        ).map((x) => x.ingredient);
+
+        const steps = (
+          await all(
+            `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+            [r.id]
+          )
+        ).map((x) => x.step_text);
+
+        const dietaryTags = (
+          await all(`SELECT tag FROM recipe_tags WHERE recipe_id = ? ORDER BY tag`, [
+            r.id,
+          ])
+        ).map((x) => x.tag);
+
+        out.push({
+          id: String(r.id),
+          title: r.title,
+          description: r.description || "",
+          prepTime: r.prep_time,
+          cookTime: r.cook_time,
+          cost: r.cost,
+          ingredients,
+          steps,
+          dietaryTags,
+          createdAt: r.created_at,
+          isGlobal,
+        });
+      }
+
+      return out;
+    }
+
+    res.json({
+      mine: await hydrate(mineRows, false),
+      global: await hydrate(globalRows, true),
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error reading recipes");
+  }
+});
+
+/* =========================
+   AUTH ROUTES (SQL)
+   ========================= */
+
+app.post("/register", async (req, res) => {
+  try {
+    let { username, password } = req.body;
+
+    username = (username || "").trim();
+    password = (password || "").trim();
+
+    if (username.length < 6) {
+      return res.status(400).send("Username must be at least 6 characters long");
+    }
+
+    if (password.length < 6) {
+      return res.status(400).send("Password must be at least 6 characters long");
+    }
+
+    const existing = await get(`SELECT id FROM users WHERE username = ?`, [
+      username,
+    ]);
+
+    if (existing) {
+      return res.status(400).send("Username already exists");
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+    const ins = await run(
+      `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
+      [username, password_hash]
+    );
+    const userId = ins.lastID;
+
+    let allergies = req.body.allergies || [];
+    let preferences = req.body.preferences || [];
+
+    if (!Array.isArray(allergies)) allergies = [allergies];
+    if (!Array.isArray(preferences)) preferences = [preferences];
+
+    allergies = allergies.map((a) => String(a).trim()).filter(Boolean);
+    preferences = preferences.map((p) => String(p).trim()).filter(Boolean);
+
+    for (const a of allergies) {
+      await run(
+        `INSERT OR IGNORE INTO user_allergies (user_id, allergy) VALUES (?, ?)`,
+        [userId, a]
+      );
+    }
+
+    for (const p of preferences) {
+      await run(
+        `INSERT OR IGNORE INTO user_preferences (user_id, preference) VALUES (?, ?)`,
+        [userId, p]
+      );
+    }
+
+    return res.send("User registered successfully");
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Error registering user");
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    let { username, password } = req.body;
+
+    username = (username || "").trim();
+    password = (password || "").trim();
+
+    const user = await get(
+      `SELECT id, username, password_hash FROM users WHERE username = ?`,
+      [username]
+    );
+
+    if (!user) {
+      return res.status(401).send("Invalid username or password");
+    }
+
+    const ok = await bcrypt.compare(password, user.password_hash);
+    if (!ok) {
+      return res.status(401).send("Invalid username or password");
+    }
+
+    req.session.user = { id: user.id, username: user.username };
+    return req.session.save(() => res.send("Login successful"));
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Server error");
+  }
+});
+
+// Logout
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).send("Could not log out");
+    res.clearCookie("mealmj_sid");
+    res.send("Logged out");
+  });
+});
+
+/* =========================
+   RECIPE CRUD (SQL)
+   ========================= */
+
+app.delete("/recipes/:id", requireAuth, async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await run(`DELETE FROM recipe_ingredients WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipe_steps WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipe_tags WHERE recipe_id = ?`, [id]);
+    await run(`DELETE FROM recipes WHERE id = ?`, [id]);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Open one recipe
+app.get("/recipes/:id", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).json({ error: "No recipe ID provided" });
+    }
+
+    const r = await get(
+      `SELECT id, title, description, prep_time, cook_time, cost, owner_user_id
+       FROM recipes
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (!r) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    if (r.owner_user_id !== userId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    const ingredients = (
+      await all(`SELECT ingredient FROM recipe_ingredients WHERE recipe_id = ?`, [
+        id,
+      ])
+    ).map((x) => x.ingredient);
+
+    const steps = (
+      await all(
+        `SELECT step_text FROM recipe_steps WHERE recipe_id = ? ORDER BY step_index`,
+        [id]
+      )
+    ).map((x) => x.step_text);
+
+    const dietaryTags = (
+      await all(`SELECT tag FROM recipe_tags WHERE recipe_id = ? ORDER BY tag`, [id])
+    ).map((x) => x.tag);
+
+    res.json({
+      id: String(r.id),
+      title: r.title,
+      description: r.description || "",
+      prepTime: r.prep_time,
+      cookTime: r.cook_time,
+      cost: r.cost,
+      ingredients,
+      steps,
+      dietaryTags,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Error reading recipe" });
+  }
+});
+
+// Update the recipe
+app.put("/recipes/:id", requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const id = req.params.id;
+
+    const {
+      title,
+      description,
+      prepTime,
+      cookTime,
+      cost,
+      ingredients,
+      steps,
+      dietaryTags,
+    } = req.body;
+
+    const existing = await get(
+      `SELECT owner_user_id FROM recipes WHERE id = ?`,
+      [id]
+    );
+
+    if (!existing) return res.status(404).send("Recipe not found");
+    if (existing.owner_user_id !== userId) {
+      return res.status(403).send("Not authorized");
+    }
