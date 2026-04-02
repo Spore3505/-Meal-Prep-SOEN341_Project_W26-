@@ -1,0 +1,11 @@
+Muhammad Mobin Syed (40299024)
+
+March 22
+
+
+Did the backend for missing dietary tag field 
+Did backend for weakly mean planner
+Wrote tests for sprint 2
+Recreated database with more global recepies
+
+time spent 3 hours
