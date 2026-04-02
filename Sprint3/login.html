@@ -7,7 +7,69 @@
     header { text-align: center; }
     nav ul { list-style: none; padding: 0; }
     nav li { display: inline; margin: 0 10px; }
-    section { text-align: center; margin-top: 40px; }
+    section { text-align: center; margin-top: 40px; padding: 0 14px 40px; }
+
+    .box {
+      display: inline-block;
+      text-align: left;
+      margin-top: 14px;
+      width: min(400px, 92vw);
+      background-color: #ffffff0a;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 14px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    .box h2 {
+      margin: 0 0 20px;
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,.4);
+    }
+
+    .box input[type="text"],
+    .box input[type="password"] {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.12);
+      outline: none;
+      font-family: Georgia, serif;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+    }
+
+    .box button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background-color: #e7b262;
+      color: #fff;
+      font-family: Georgia, serif;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .box button[type="submit"]:hover {
+      background-color: #ffeb3b;
+      color: #333;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 14px;
+      font-family: Georgia, serif;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -26,18 +88,19 @@
 </header>
 
 <section>
-  <h2>LOGIN</h2>
+  <div class="box">
+    <h2>LOGIN</h2>
 
-  <h3>Please enter your username and password</h3>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required><br>
+      <input type="password" id="password" placeholder="Password" required><br>
+      <button type="submit">LOGIN</button>
+    </form>
 
-  <form id="loginForm">
-    <input type="text" id="username" placeholder="Username" required><br><br>
-    <input type="password" id="password" placeholder="Password" required><br><br>
-    <button type="submit">LOGIN</button>
-  </form>
-
-  <br>
-  <span>If you don’t have an account, please <a href="register.html">Register</a></span>
+    <div class="register-link">
+      If you don't have an account, please <a href="register.html">Register</a>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -102,6 +165,3 @@
 </body>
 
 </html>
-
-
-
