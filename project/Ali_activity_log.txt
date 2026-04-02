@@ -1,0 +1,12 @@
+Sprint 1 Activity log
+
+Ali Kotb (40217082)
+
+I Helped pick a template for the product log, implemented user stories and tasks.
+
+time spent : 1H
+
+Implemented UI for the account management page, matching colour scheme with pre determined style. 
+
+Time spent : 2H
+

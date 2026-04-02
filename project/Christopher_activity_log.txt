@@ -1,0 +1,14 @@
+Sprint 1 Activity log
+
+Christopher Dunn
+
+January 27
+learn HTML and JavaScript
+Created the backbone of the website, such as 
+-login page 
+-registration page
+This includes the backend of the mentioned pages
+
+The time that it took me was 2 hours
+
+
