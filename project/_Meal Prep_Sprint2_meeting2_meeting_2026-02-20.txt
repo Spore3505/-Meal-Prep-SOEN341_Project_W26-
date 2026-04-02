@@ -1,0 +1,27 @@
+# Meal Prep_Sprint2_meeting2_meeting_2026-02-20
+Date: 2026-02-20
+
+Attendees:
+- Muhammad Mobin Syed (40299024)
+- Christopher Dunn (40285514)
+- Yalan Luo (40275103)
+- Mathieu Boileau (40257130)
+- Ali Kotb (40217082)
+
+Meeting Goals / Objectives:
+- Showcase current progress on Sprint 2 tasks
+- Discuss development of unique features
+- Plan next steps for Sprint 2
+
+Discussion Notes:
+- Team demonstrated ongoing work and current progress
+- Discussed ideas and development plans for unique features
+- Evaluated which features should be prioritized in this sprint
+task division
+- MOE & Christopher: Continue working on Create, edit, delete recipes (frontend & backend)
+- Mathieu: Continue Search recipes and Dashboard features
+- Ali & Yalan: Continue Filter recipes
+- Christopher: Continue CSS updates for registration page
+
+Action Items:
+ALL: Continue working on assigned tasks, focus on unique feature implementation, and update the backlog.
