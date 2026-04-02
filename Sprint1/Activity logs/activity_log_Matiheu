@@ -1,9 +1,0 @@
-January 31st 2026
-
--implemented changes on the registration page to include allergies and food preferences.
-added username verification to our server.js file to ensure there will not be 2 users with the same 
-information
-
-added minimum characters for both password and username.
-
-time spend 3 hours.
