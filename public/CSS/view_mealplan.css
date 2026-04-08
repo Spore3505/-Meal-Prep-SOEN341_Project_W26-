@@ -1,10 +1,13 @@
- body {
-    min-height: 100vh; /* IMPORTANT */
-    background-image: url('images/background.avif');
+
+  body {
+    font-family: Arial, sans-serif;
+    background-image: url('/images/background.avif');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* 👈 key line */
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
   }
 
   header {
@@ -18,7 +21,7 @@
     width: 400px;
     height: 120px;
     margin: 0 auto;
-    background-image: url('images/logo.png');
+    background-image: url('/images/logo.png');
     background-size: 100px 100px;
     background-repeat: no-repeat;
     background-position: left center;
@@ -63,7 +66,9 @@
   h2 {
     margin-bottom: 20px;
   }
- #planner {
+
+
+  #planner {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px;
@@ -162,4 +167,3 @@
     margin-bottom: 18px;
     flex-wrap: wrap;
   }
-
