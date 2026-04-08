@@ -1,6 +1,6 @@
 // server.js
 const express = require("express");
-const path = reqquire("path");
+const path = require("path");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
 const { initDb, run, get, all } = require("../models/db");
