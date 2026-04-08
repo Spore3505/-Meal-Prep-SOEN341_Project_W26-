@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Pick a Recipe – MealMajor</title>
-    <link rel="stylesheet" href="/CSS/random_pick.css">
-
+  <link rel="stylesheet" href="/CSS/random_pick.css" />
 </head>
-
 <body>
 
 <header>
@@ -25,14 +23,10 @@
 
 <main>
   <h2 class="page-title">🎲 Pick a Recipe For Me</h2>
-  <p class="subtitle">Answer 5 quick questions and we'll find you something to cook!</p>
+  <p class="subtitle">Answer 5 quick questions and get a fresh AI-style recipe idea.</p>
 
   <div class="box">
-
-    <!-- ── QUIZ SECTION ── -->
     <div id="quiz">
-
-      <!-- Q1 -->
       <div class="question-block">
         <p>1. How much time do you have to cook?</p>
         <div class="options" data-q="time">
@@ -43,7 +37,6 @@
         </div>
       </div>
 
-      <!-- Q2 -->
       <div class="question-block">
         <p>2. What kind of meal are you in the mood for?</p>
         <div class="options" data-q="type">
@@ -54,28 +47,25 @@
         </div>
       </div>
 
-      <!-- Q3 -->
       <div class="question-block">
         <p>3. Do you want it spicy?</p>
         <div class="options" data-q="spicy">
-          <button class="option-btn" data-value="spicy" onclick="select(this)">🌶️ Yes, bring the heat!</button>
-          <button class="option-btn" data-value="mild" onclick="select(this)">😌 No, keep it mild</button>
+          <button class="option-btn" data-value="spicy" onclick="select(this)">🌶️ Yes</button>
+          <button class="option-btn" data-value="mild" onclick="select(this)">😌 Keep it mild</button>
           <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
         </div>
       </div>
 
-      <!-- Q4 -->
       <div class="question-block">
         <p>4. What's your budget per serving?</p>
         <div class="options" data-q="cost">
           <button class="option-btn" data-value="cheap" onclick="select(this)">💰 Under $5</button>
-          <button class="option-btn" data-value="moderate" onclick="select(this)">💵 under $8</button>
+          <button class="option-btn" data-value="moderate" onclick="select(this)">💵 $5–$8</button>
           <button class="option-btn" data-value="splurge" onclick="select(this)">💎 $8+</button>
           <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
         </div>
       </div>
 
-      <!-- Q5 -->
       <div class="question-block">
         <p>5. Any dietary requirement?</p>
         <div class="options" data-q="dietary">
@@ -95,21 +85,21 @@
       <div id="seenNote"></div>
     </div>
 
-    <!-- ── RESULT SECTION ── -->
     <div id="recipeResult">
       <div class="recipe-card" id="recipeCard"></div>
 
-      <div class="btn-row">
+      <div class="btn-row result-actions">
         <button class="btn" id="saveBtn" onclick="saveRecipe()">💾 Save to My Collection</button>
-        <button class="btn btn-secondary" onclick="tryAnother()">🔀 Try Another</button>
-        <button class="btn btn-secondary" onclick="backToQuiz()">← Change Answers</button>
+        <button class="btn btn-secondary" onclick="tryAnother()">🔁 Try Another</button>
+        <button class="btn btn-secondary" onclick="backToQuiz()">← Back to Quiz</button>
       </div>
 
-      <div id="msg"></div>
+      <div id="resultMsg"></div>
+      <div id="resultSeenNote"></div>
     </div>
-
   </div>
 </main>
+
 <script src="/js/random_pick.js"></script>
 </body>
 </html>
