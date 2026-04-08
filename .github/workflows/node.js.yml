@@ -7,16 +7,12 @@ on:
       - "public/**"
       - "src/**"
       - ".github/workflows/**"
-      - "package-lock.json"
-      - "package.json"
   pull_request:
     branches: ["main"]
     paths:
       - "public/**"
       - "src/**"
       - ".github/workflows/**"
-      - "package-lock.json"
-      - "package.json"
 
 jobs:
   test:
