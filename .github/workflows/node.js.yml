@@ -1,4 +1,4 @@
-name: Sprint4 CI
+name: Sprint3 CI
 
 on:
   push:
@@ -21,6 +21,9 @@ jobs:
     defaults:
       run:
         working-directory: src/controllers
+
+    env:
+      NODE_PATH: ${{ github.workspace }}/src/controllers/node_modules
 
     steps:
       - name: Checkout
