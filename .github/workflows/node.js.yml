@@ -1,16 +1,22 @@
-name: Sprint3 CI
+name: Sprint4 CI
 
 on:
   push:
     branches: ["main"]
     paths:
-      - "Sprint3/**"
+      - "public/**"
+      - "src/**"
       - ".github/workflows/**"
+      - "package-lock.json"
+      - "package.json"
   pull_request:
     branches: ["main"]
     paths:
-      - "Sprint3/**"
+      - "public/**"
+      - "src/**"
       - ".github/workflows/**"
+      - "package-lock.json"
+      - "package.json"
 
 jobs:
   test:
@@ -18,7 +24,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: Sprint3
+        working-directory: src/controllers
 
     steps:
       - name: Checkout
@@ -28,6 +34,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: src/controllers/package-lock.json
 
       - name: Install dependencies
         run: npm install
