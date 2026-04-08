@@ -1,4 +1,4 @@
-html, body {
+    html, body {
       width: 100%;
       height: 100%;
       margin: 0;
@@ -6,13 +6,13 @@ html, body {
     }
 
     body {
-      min-height: 100vh; /* IMPORTANT */
-      background-image: url('images/background.avif');
+     background-image: url('/images/background.avif');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed; /* 👈 key line */
-
+      background-color: #f0f8ff;
+      font-family: Georgia, serif;
+      color: #333;
     }
 
     header {
@@ -26,7 +26,7 @@ html, body {
       width: 400px;
       height: 120px;
       margin: 0 auto;
-      background-image: url('images/logo.png');
+      background-image: url('/images/logo.png');
       background-size: 100px 100px;
       background-repeat: no-repeat;
       background-position: left center;
@@ -88,7 +88,8 @@ html, body {
       padding: 22px;
       box-shadow: 0 10px 25px rgba(0,0,0,.18);
     }
-.section {
+
+    .section {
       margin-top: 18px;
       padding-top: 10px;
       border-top: 1px solid rgba(255,255,255,.18);
@@ -115,18 +116,14 @@ html, body {
       font-family: Georgia, serif;
     }
 
-    textarea {
-      resize: vertical;
-    }
+    textarea { resize: vertical; }
 
     .flex {
       display: flex;
       gap: 10px;
     }
 
-    .flex > div {
-      flex: 1;
-    }
+    .flex > div { flex: 1; }
 
     .tagWrap {
       display: flex;
@@ -153,9 +150,7 @@ html, body {
       font-size: 14px;
     }
 
-    .tag button:hover {
-      color: #ffeb3b;
-    }
+    .tag button:hover { color: #ffeb3b; }
 
     .addLine {
       display: flex;
@@ -163,9 +158,7 @@ html, body {
       margin-top: 10px;
     }
 
-    .addLine input {
-      flex: 1;
-    }
+    .addLine input { flex: 1; }
 
     .addLine button,
     .actions button {
