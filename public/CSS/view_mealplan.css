@@ -1,169 +1,211 @@
+html, body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #f0f8ff;
+  background-image: url('/images/background.avif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-  body {
-    font-family: Arial, sans-serif;
-    background-image: url('/images/background.avif');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #f0f8ff;
-    margin: 0;
-    padding: 0;
-  }
+body {
+  min-height: 100vh;
+  font-family: Georgia, serif;
+  color: #333;
+}
 
-  header {
-    background-color: #e7b262;
-    color: white;
-    text-align: center;
-    padding: 18px 10px 10px;
-  }
+/* ===== HEADER / NAV ===== */
+header {
+  background-color: #e7b262;
+  color: white;
+  text-align: center;
+  padding: 18px 10px 10px;
+}
 
-  header h1 {
-    width: 400px;
-    height: 120px;
-    margin: 0 auto;
-    background-image: url('/images/logo.png');
-    background-size: 100px 100px;
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 70px;
-    font-size: 52px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,.5);
-    line-height: 120px;
-  }
+header h1 {
+  width: 400px;
+  height: 120px;
+  margin: 0 auto;
+  background-image: url('/images/logo.png');
+  background-size: 100px 100px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 70px;
+  font-size: 52px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+  line-height: 120px;
+}
 
-  nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 8px;
-  }
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 8px;
+}
 
-  nav li {
-    display: inline-block;
-    margin: 0 10px;
-  }
+nav li {
+  display: inline-block;
+  margin: 0 10px;
+}
 
-  nav a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 6px 12px;
-    display: inline-block;
-  }
+nav button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
 
-  nav a:hover {
-    text-decoration: underline;
-    color: #ffeb3b;
-  }
+nav button:hover {
+  text-decoration: underline;
+  color: #ffeb3b;
+}
 
-  section {
-    text-align: center;
-    margin-top: 40px;
-  }
+nav button:disabled {
+  opacity: .85;
+  cursor: default;
+}
 
-  h2 {
-    margin-bottom: 20px;
-  }
+header hr {
+  border: 0;
+  border-top: 1px solid rgba(255,255,255,.35);
+  margin: 12px auto 0;
+  width: min(900px,92%);
+}
 
+/* ===== MAIN ===== */
+section {
+  text-align: center;
+  margin-top: 40px;
+  padding-bottom: 60px;
+}
 
-  #planner {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
+h2 {
+  margin-bottom: 20px;
+}
 
-  .day-card {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    position: relative;
-  }
+/* ===== BUTTON AREA ===== */
+.topActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
 
-  .day-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: 18px;
-  }
+/* ===== PLANNER GRID ===== */
+#planner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
-  .meal {
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
+.day-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  position: relative;
+  transition: transform 0.15s ease;
+}
 
-  .meal:hover {
-    transform: scale(1.03);
-  }
+.day-card:hover {
+  transform: translateY(-4px);
+}
 
-  .breakfast { background-color: #fff3cd; }
-  .lunch { background-color: #d1e7dd; }
-  .dinner { background-color: #f8d7da; }
+.day-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 18px;
+}
 
-  .empty {
-    color: #777;
-    font-style: italic;
-  }
+.meal {
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
 
-  .clear-day {
-    margin-top: 10px;
-    padding: 6px 10px;
-    cursor: pointer;
-    width: 100%;
-  }
-  .modal {
-    display: none;
-    position: fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 10;
-  }
+.meal:hover {
+  transform: scale(1.03);
+}
 
-  .modal-content {
-    background: white;
-    width: 320px;
-    max-height: 80%;
-    overflow-y: auto;
-    margin: 80px auto;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: left;
-  }
+.breakfast { background-color: #fff3cd; }
+.lunch { background-color: #d1e7dd; }
+.dinner { background-color: #f8d7da; }
 
-  #searchInput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-  }
+.empty {
+  color: #777;
+  font-style: italic;
+}
 
-  .recipe-item {
-    padding: 8px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-  }
+.clear-day {
+  margin-top: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: #e7b262;
+  color: white;
+  font-weight: bold;
+}
 
-  .recipe-item:hover {
-    background: #f0f0f0;
-  }
+.clear-day:hover {
+  background: #ffeb3b;
+  color: #333;
+}
 
-  button {
-    margin-top: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
+/* ===== MODAL ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 10;
+}
 
-  .topActions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-  }
+.modal-content {
+  background: white;
+  width: 320px;
+  max-height: 80%;
+  overflow-y: auto;
+  margin: 80px auto;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.recipe-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.recipe-item:hover {
+  background: #f0f0f0;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
