@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Recipe</title>
+    <link rel="stylesheet" href="/CSS/create.css">
+
+</head>
+
+<body>
+  <header>
+    <h1>MealMajor</h1>
+
+    <nav>
+      <ul>
+        <li><button onclick="window.location.href='/'">Home</button></li>
+        <li><button disabled>Create</button></li>
+        <li><button onclick="window.location.href='recipes.html'">My Recipes</button></li>
+        <li><button onclick="window.location.href='account.html'">Account</button></li>
+      </ul>
+    </nav>
+
+    <hr />
+  </header>
+
+  <main>
+    <div class="box">
+      <div class="section">
+        <label>Recipe Name</label>
+        <input type="text" id="title" />
+      </div>
+
+      <div class="section">
+        <label>Description</label>
+        <textarea rows="3" id="description"></textarea>
+      </div>
+
+      <div class="section flex">
+        <div>
+          <label>Prep Time (min)</label>
+          <input type="number" id="prepTime" />
+        </div>
+        <div>
+          <label>Cook Time (min)</label>
+          <input type="number" id="cookTime" />
+        </div>
+        <div>
+          <label>Cost ($)</label>
+          <input type="number" step="0.01" id="cost" />
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Ingredients</label>
+        <div class="tagWrap" id="ingredients"></div>
+
+        <div class="addLine">
+          <input type="number" id="ingredientQty" placeholder="Qty" style="max-width:90px;" />
+          <select id="ingredientUnit" style="max-width:110px;">
+            <option value="">Unit</option>
+            <option>g</option>
+            <option>kg</option>
+            <option>ml</option>
+            <option>L</option>
+            <option>tsp</option>
+            <option>tbsp</option>
+            <option>cups</option>
+          </select>
+          <input type="text" id="ingredientName" placeholder="Ingredient name" />
+          <button type="button" onclick="addIngredient()">Add</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Preparation Steps</label>
+        <div class="tagWrap" id="steps"></div>
+
+        <div class="addLine">
+          <input type="text" id="stepInput" placeholder="Add step" />
+          <button type="button" onclick="addStep()">Add</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Dietary Tags</label>
+        <div class="tagWrap" id="dietaryTags"></div>
+
+        <div class="addLine">
+          <input type="text" id="dietaryInput" placeholder="e.g. vegan, gluten-free" />
+          <button type="button" onclick="addDietaryTag()">Add</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="saveRecipe()">Save Recipe</button>
+        <div id="msg"></div>
+      </div>
+    </div>
+  </main>
+  <script src="/js/create.js"></script>
+
+
+</body>
+</html>
