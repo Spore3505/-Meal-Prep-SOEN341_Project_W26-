@@ -23,8 +23,9 @@
   },
   
 "lint-staged": {
-  "**/*.{js,ts}": "eslint",
+  "**/*.js": "eslint",
   "**/*.css": "stylelint"
+
 }
 
 
