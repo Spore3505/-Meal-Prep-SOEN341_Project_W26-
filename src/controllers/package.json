@@ -22,9 +22,13 @@
     "supertest": "^6.3.4"
   },
   
-  "lint-staged": {
-    "**/*.js": "eslint --fix",
-    "**/*.css": "stylelint --fix"
-  }
+"lint-staged": {
+  "*.{js,ts}": [
+    "eslint"
+  ],
+  "*.{css}": [
+    "stylelint"
+  ]
+}
 
 }
