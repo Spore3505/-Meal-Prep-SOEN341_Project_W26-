@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pick a Recipe – MealMajor</title>
+  <link rel="stylesheet" href="/CSS/random_pick.css" />
+</head>
+<body>
+
+<header>
+  <h1>MealMajor</h1>
+  <nav>
+    <ul>
+      <li><button onclick="window.location.href='/'">Home</button></li>
+      <li><button onclick="window.location.href='create.html'">Create</button></li>
+      <li><button onclick="window.location.href='recipes.html'">My Recipes</button></li>
+      <li><button onclick="window.location.href='view_mealplan.html'">Meal Plan</button></li>
+      <li><button onclick="window.location.href='account.html'">Account</button></li>
+    </ul>
+  </nav>
+  <hr>
+</header>
+
+<main>
+  <h2 class="page-title">🎲 Pick a Recipe For Me</h2>
+  <p class="subtitle">Answer 5 quick questions and get a fresh AI-style recipe idea.</p>
+
+  <div class="box">
+    <div id="quiz">
+      <div class="question-block">
+        <p>1. How much time do you have to cook?</p>
+        <div class="options" data-q="time">
+          <button class="option-btn" data-value="quick" onclick="select(this)">⚡ Under 15 min</button>
+          <button class="option-btn" data-value="medium" onclick="select(this)">🕐 15–30 min</button>
+          <button class="option-btn" data-value="long" onclick="select(this)">🍳 30+ min</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>2. What kind of meal are you in the mood for?</p>
+        <div class="options" data-q="type">
+          <button class="option-btn" data-value="vegetarian" onclick="select(this)">🥗 Vegetarian</button>
+          <button class="option-btn" data-value="vegan" onclick="select(this)">🌱 Vegan</button>
+          <button class="option-btn" data-value="protein" onclick="select(this)">💪 High Protein</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>3. Do you want it spicy?</p>
+        <div class="options" data-q="spicy">
+          <button class="option-btn" data-value="spicy" onclick="select(this)">🌶️ Yes</button>
+          <button class="option-btn" data-value="mild" onclick="select(this)">😌 Keep it mild</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>4. What's your budget per serving?</p>
+        <div class="options" data-q="cost">
+          <button class="option-btn" data-value="cheap" onclick="select(this)">💰 Under $5</button>
+          <button class="option-btn" data-value="moderate" onclick="select(this)">💵 $5–$8</button>
+          <button class="option-btn" data-value="splurge" onclick="select(this)">💎 $8+</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 Don't care</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>5. Any dietary requirement?</p>
+        <div class="options" data-q="dietary">
+          <button class="option-btn" data-value="gluten-free" onclick="select(this)">🌾 Gluten-Free</button>
+          <button class="option-btn" data-value="dairy-free" onclick="select(this)">🥛 Dairy-Free</button>
+          <button class="option-btn" data-value="halal" onclick="select(this)">☪️ Halal</button>
+          <button class="option-btn" data-value="any" onclick="select(this)">🤷 None / Don't care</button>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="findRecipe()">🎲 Find Me a Recipe!</button>
+        <button class="btn btn-secondary" onclick="resetQuiz()">↺ Reset</button>
+      </div>
+
+      <div id="msg"></div>
+      <div id="seenNote"></div>
+    </div>
+
+    <div id="recipeResult">
+      <div class="recipe-card" id="recipeCard"></div>
+
+      <div class="btn-row result-actions">
+        <button class="btn" id="saveBtn" onclick="saveRecipe()">💾 Save to My Collection</button>
+        <button class="btn btn-secondary" onclick="tryAnother()">🔁 Try Another</button>
+        <button class="btn btn-secondary" onclick="backToQuiz()">← Back to Quiz</button>
+      </div>
+
+      <div id="resultMsg"></div>
+      <div id="resultSeenNote"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/random_pick.js"></script>
+</body>
+</html>

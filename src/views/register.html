@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/CSS/style_login_register_home.css">
+
+
+</head>
+
+<body>
+
+<header>
+    <h1>RecipeBook</h1>
+    <nav>
+        <ul>
+            <li><button onclick="window.location.href='/'">Home</button></li>
+            <li><button disabled>Register</button></li>
+            <li><button onclick="window.location.href='login.html'">Login</button></li>
+        </ul>
+    </nav>
+    <hr>
+</header>
+
+<main>
+
+    <div class="box">
+
+        <form id="registerForm">
+
+            <div class="section">
+                <label>Username</label>
+                <input id="username" type="text" required minlength="6" placeholder="min 6 characters">
+
+                <label>Password</label>
+                <input id="password" type="password" required minlength="6" placeholder="min 6 characters">
+            </div>
+
+            <div class="section">
+                <h3>Select Your Allergies</h3>
+
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="allergy" value="peanut"> Peanut</label>
+                    <label><input type="checkbox" name="allergy" value="dairy"> Dairy</label>
+                    <label><input type="checkbox" name="allergy" value="gluten"> Gluten</label>
+                    <label><input type="checkbox" name="allergy" value="seafood"> Seafood</label>
+                    <label><input type="checkbox" name="allergy" value="soy"> Soy</label>
+                    <label><input type="checkbox" name="allergy" value="egg"> Egg</label>
+                    <label><input type="checkbox" name="allergy" value="wheat"> Wheat</label>
+                    <label><input type="checkbox" name="allergy" value="tree_nuts"> Tree Nuts</label>
+                </div>
+
+                <input type="text" id="other" placeholder="Other allergies">
+            </div>
+
+            <div class="section">
+                <h3>Select Your Preferences</h3>
+
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="preference" value="vegetarian"> Vegetarian</label>
+                    <label><input type="checkbox" name="preference" value="vegan"> Vegan</label>
+                    <label><input type="checkbox" name="preference" value="beef"> Beef</label>
+                    <label><input type="checkbox" name="preference" value="eggs"> Eggs</label>
+                    <label><input type="checkbox" name="preference" value="chicken"> Chicken</label>
+                    <label><input type="checkbox" name="preference" value="pork"> Pork</label>
+                    <label><input type="checkbox" name="preference" value="fish"> Fish</label>
+                </div>
+
+                <input type="text" id="other_pref" placeholder="Other preferences">
+            </div>
+
+            <div class="actions">
+                <button type="submit">Register</button>
+            </div>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+
+            <p id="msg"></p>
+
+        </form>
+
+    </div>
+
+</main>
+
+<script src="/js/register.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meal Planner</title>
+    <link rel="stylesheet" href="/CSS/view_mealplan.css">
+
+</head>
+<body>
+
+<header>
+  <h1>MealMajor</h1>
+  <nav>
+    <ul>
+      <li><a href="/">HOME</a></li>
+      <li><a href="recipes.html">RECIPES</a></li>
+      <li><a href="view_mealplan.html">MEAL PLAN</a></li>
+    </ul>
+  </nav>
+  <hr>
+</header>
+
+<!-- =========================
+     WEEKLY MEAL PLANNER
+========================= -->
+<section>
+  <h2>WEEKLY MEAL PLAN</h2>
+
+  <div class="topActions">
+    <button
+      onclick="window.location.href='random_pick.html'"
+      style="padding:10px 20px; border:none; border-radius:10px;
+             background:#e7b262; color:white; font-weight:bold;
+             cursor:pointer; font-size:15px; font-family:Georgia,serif;">
+      🎲 Pick a Recipe For Me
+    </button>
+  </div>
+
+  <div id="planner"></div>
+</section>
+
+
+<div id="recipeModal" class="modal">
+  <div class="modal-content">
+    <h3>Select Recipe</h3>
+    <input type="text" id="searchInput" placeholder="Search recipes...">
+    <div id="recipeList"></div>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="/js/view_mealplan.js"></script>
+
+
+</body>
+</html>

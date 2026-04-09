@@ -1,0 +1,21 @@
+# -Meal-Prep-SOEN341_Project_W26-
+
+
+Members:
+
+Muhammad Mobin Syed (40299024)-BackEnd Programming
+
+Christopher Dunn (40285514) BackEnd and FrontEnd programming
+
+Yalan Luo (40275103)- CSS and backend programming
+
+Mathieu Boileau (40257130) Role: Frontend‑focused developer (with some backend contribution).
+
+Ali Kotb (40217082)
+
+Problems:
+-students need a platform to be able to create recepies that they can share with their freinds
+
+Solution:
+
+MealMajor is a web app for students to plan meals, track groceries, and propose easy recipes which is shareable with your friends and family
