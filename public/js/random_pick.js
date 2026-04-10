@@ -75,6 +75,7 @@ async function requestGeneratedRecipe() {
   const res = await fetch("/recipes/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       answers,
       excludeTitles: [...seenTitles]
