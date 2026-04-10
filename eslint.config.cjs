@@ -5,7 +5,8 @@ const globals = require("globals");
 module.exports = defineConfig([
   {
     ignores: [
-      "src/controllers/**"
+      "src/**",
+      "server.js"
     ],
   },
   {
