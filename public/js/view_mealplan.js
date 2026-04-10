@@ -10,10 +10,11 @@ let selectedMeal = null;
 // Fetch recipes
 async function loadRecipes() {
   try {
-    const res = await fetch("/recipes/all");
+    const res = await fetch("/recipes/all", { credentials: "include" });
+    if (!res.ok) throw new Error("Failed to load recipes");
     const data = await res.json();
-    allMine = data.mine;
-    allGlobal = data.global;
+    allMine = data.mine || [];
+    allGlobal = data.global || [];
   } catch (err) {
     console.error("Failed to load recipes:", err);
   }
@@ -53,6 +54,7 @@ function renderPlanner() {
             await fetch("/plan/delete", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
+              credentials: "include",
               body: JSON.stringify({ day, meal })
             });
 
@@ -81,6 +83,7 @@ function renderPlanner() {
           await fetch("/plan/clear-day", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ day })
           });
 
@@ -145,6 +148,7 @@ function renderRecipeList(list) {
         const response = await fetch("/plan/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             day: selectedDay,
             meal: selectedMeal,
@@ -153,8 +157,6 @@ function renderRecipeList(list) {
         });
 
         if (!response.ok) throw new Error("Server failed to save");
-
-        console.log("Saving meal:", { day: selectedDay, meal: selectedMeal, recipeId: r.id });
 
         // 3. Update UI and close modal
         renderPlanner();
@@ -184,7 +186,8 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
 });
 async function loadMealPlan() {
   try {
-    const res = await fetch("/plan");
+    const res = await fetch("/plan", { credentials: "include" });
+    if (!res.ok) throw new Error("Failed to load meal plan");
     const data = await res.json();
 
     // Clear current plan
@@ -193,8 +196,8 @@ async function loadMealPlan() {
     // Map recipe IDs to actual recipe objects from allMine + allGlobal
     const allRecipes = [...allMine, ...allGlobal];
 
-    data.meals.forEach(m => {
-      const recipe = allRecipes.find(r => r.id === m.recipe_id);
+    (data.meals || []).forEach(m => {
+      const recipe = allRecipes.find(r => String(r.id) === String(m.recipe_id));
       if (recipe) {
         if (!plan[m.day]) plan[m.day] = {};
         plan[m.day][m.meal] = recipe;

@@ -1,4 +1,3 @@
-       console.log("JS CONNECTED");
     let allMine = [];
     let allGlobal = [];
     const filters = {};
@@ -191,7 +190,7 @@
 
     async function loadAll() {
       try {
-        const res = await fetch("/recipes/all");
+        const res = await fetch("/recipes/all", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to load recipes");
 
         const data = await res.json();
@@ -219,7 +218,6 @@
     }
 
     async function deleteRecipe(id) {
-      console.log("Deleting recipe id:", id);
       if (!confirm("Are you sure you want to delete this recipe?")) return;
 
       try {

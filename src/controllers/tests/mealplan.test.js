@@ -8,6 +8,8 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await run("DELETE FROM meal_plans");
+  await run("DELETE FROM user_allergies");
+  await run("DELETE FROM user_preferences");
   await run("DELETE FROM recipe_steps");
   await run("DELETE FROM recipe_ingredients");
   await run("DELETE FROM recipe_tags");

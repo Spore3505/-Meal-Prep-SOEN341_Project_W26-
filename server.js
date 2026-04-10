@@ -14,14 +14,14 @@ app.use(express.json());
 app.use(
   session({
     name: "mealmj_sid",
-    secret: "CHANGE_THIS_SECRET",
+    secret: process.env.SESSION_SECRET || "CHANGE_THIS_SECRET",
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 2,
-      // secure: true,
+      secure: process.env.NODE_ENV === "production",
     },
   })
 );
@@ -1109,10 +1109,10 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("Username already exists");
     }
 
-    const password_hash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     const ins = await run(
       `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
-      [username, password_hash]
+      [username, passwordHash]
     );
     const userId = ins.lastID;
 
@@ -1190,8 +1190,13 @@ app.post("/logout", (req, res) => {
 
 app.delete("/recipes/:id", requireAuth, async (req, res) => {
   const id = req.params.id;
+  const userId = req.session.user.id;
 
   try {
+    const recipe = await get(`SELECT owner_user_id FROM recipes WHERE id = ?`, [id]);
+    if (!recipe) return res.status(404).json({ error: "Recipe not found" });
+    if (recipe.owner_user_id !== userId) return res.status(403).json({ error: "Not authorized" });
+
     await run(`DELETE FROM recipe_ingredients WHERE recipe_id = ?`, [id]);
     await run(`DELETE FROM recipe_steps WHERE recipe_id = ?`, [id]);
     await run(`DELETE FROM recipe_tags WHERE recipe_id = ?`, [id]);

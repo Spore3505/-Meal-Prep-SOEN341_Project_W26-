@@ -3,7 +3,7 @@
   // =========================
   (async function () {
     try {
-      const res = await fetch("/me");
+      const res = await fetch("/me", { credentials: "include" });
       const data = await res.json();
 
       const authLink = document.getElementById("authLink");
@@ -41,6 +41,7 @@
       const response = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password })
       });
 

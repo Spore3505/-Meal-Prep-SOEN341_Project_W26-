@@ -65,6 +65,7 @@
         const res = await fetch("/recipes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(payload)
         });
 
@@ -72,7 +73,7 @@
 
         if (!res.ok) {
           msg.style.color = "red";
-          msg.innerText = (data && data.message) || "Failed to save recipe";
+          msg.innerText = (data && (data.message || data.error)) || "Failed to save recipe";
           return;
         }
 

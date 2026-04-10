@@ -38,7 +38,8 @@ function clearMsg() {
 }
 
 async function loadRecipes() {
-  const res = await fetch("/recipes/all");
+  const res = await fetch("/recipes/all", { credentials: "include" });
+  if (!res.ok) throw new Error("Failed to load recipes");
   const data = await res.json();
   myRecipes = data.mine || [];
 }
@@ -74,6 +75,7 @@ async function requestGeneratedRecipe() {
   const res = await fetch("/recipes/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       answers,
       excludeTitles: [...seenTitles]
@@ -215,6 +217,7 @@ async function saveRecipe() {
     const res = await fetch("/recipes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         title: currentRecipe.title,
         description: currentRecipe.description || "",

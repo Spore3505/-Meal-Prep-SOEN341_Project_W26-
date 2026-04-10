@@ -93,7 +93,7 @@ document.getElementById("otherPrefInput").addEventListener("keydown", (e) => {
 
 (async function loadProfile() {
   try {
-    const res = await fetch("/profile");
+    const res = await fetch("/profile", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to load profile");
     const data = await res.json();
 
@@ -144,6 +144,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     const res = await fetch("/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ allergies, preferences })
     });
 
@@ -157,7 +158,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
-  const res = await fetch("/logout", { method: "POST" });
+  const res = await fetch("/logout", { method: "POST", credentials: "include" });
 
   if (res.ok) {
     window.location.href = "/";
