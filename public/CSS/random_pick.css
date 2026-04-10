@@ -14,6 +14,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  color: #222;
 }
 
 header {
@@ -35,7 +36,7 @@ header h1 {
   font-size: 52px;
   font-weight: bold;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgb(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgb(0 0 0 / 50%);
   line-height: 120px;
 }
 
@@ -70,7 +71,7 @@ nav button:disabled {
 
 header hr {
   border: 0;
-  border-top: 1px solid rgb(255, 255, 255, 0.35);
+  border-top: 1px solid rgb(255 255 255 / 35%);
   margin: 12px auto 0;
   width: min(900px, 92%);
 }
@@ -82,17 +83,17 @@ main {
 }
 
 .page-title {
-  color: #fff;
-  text-shadow: 1px 1px 3px rgb(0, 0, 0, 0.5);
+  color: #222;
+  text-shadow: none;
   margin-bottom: 4px;
 }
 
 .subtitle {
-  color: rgb(255, 255, 255, 0.85);
+  color: #333;
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 15px;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.35);
+  text-shadow: none;
 }
 
 .box {
@@ -100,12 +101,12 @@ main {
   text-align: left;
   margin-top: 14px;
   width: min(720px, 92vw);
-  background-color: #ffffff0a;
+  background-color: rgb(255 255 255 / 45%);
   backdrop-filter: blur(6px);
-  border: 1px solid rgb(255, 255, 255, 0.22);
+  border: 1px solid rgb(255 255 255 / 35%);
   border-radius: 14px;
   padding: 28px 28px 22px;
-  box-shadow: 0 10px 25px rgb(0, 0, 0, 0.18);
+  box-shadow: 0 10px 25px rgb(0 0 0 / 18%);
 }
 
 .question-block {
@@ -115,8 +116,8 @@ main {
 .question-block p {
   font-weight: bold;
   margin-bottom: 10px;
-  color: #fff;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
+  color: #222;
+  text-shadow: none;
 }
 
 .options {
@@ -127,10 +128,10 @@ main {
 
 .option-btn {
   padding: 8px 16px;
-  border: 2px solid rgb(255, 255, 255, 0.35);
+  border: 2px solid rgb(0 0 0 / 15%);
   border-radius: 999px;
-  background: rgb(255, 255, 255, 0.12);
-  color: #fff;
+  background: rgb(255 255 255 / 75%);
+  color: #222;
   cursor: pointer;
   font-size: 14px;
   font-family: Georgia, serif;
@@ -139,13 +140,13 @@ main {
 
 .option-btn:hover {
   border-color: #e7b262;
-  background: rgb(231, 178, 98, 0.25);
+  background: rgb(231 178 98 / 35%);
 }
 
 .option-btn.selected {
   background: #e7b262;
   border-color: #e7b262;
-  color: #fff;
+  color: white;
   font-weight: bold;
 }
 
@@ -172,13 +173,13 @@ main {
 }
 
 .btn-secondary {
-  background: rgb(255, 255, 255, 0.18);
-  border: 1px solid rgb(255, 255, 255, 0.35);
-  color: #fff;
+  background: rgb(255 255 255 / 75%);
+  border: 1px solid rgb(0 0 0 / 15%);
+  color: #222;
 }
 
 .btn-secondary:hover {
-  background: rgb(255, 255, 255, 0.28);
+  background: rgb(255 255 255 / 90%);
 }
 
 .btn-row {
@@ -199,24 +200,24 @@ main {
 }
 
 .msg-ok {
-  color: #9cffab;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
+  color: #1f7a2e;
+  text-shadow: none;
 }
 
 .msg-err {
-  color: #ffb0b0;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
+  color: #b00020;
+  text-shadow: none;
 }
 
 .msg-info {
-  color: #fff;
-  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
+  color: #222;
+  text-shadow: none;
 }
 
 #seenNote,
 #resultSeenNote {
   font-size: 13px;
-  color: rgb(255, 255, 255, 0.72);
+  color: #444;
   margin-top: 6px;
   text-align: center;
 }
@@ -226,11 +227,11 @@ main {
 }
 
 .recipe-card {
-  background: rgb(255, 255, 255, 0.96);
+  background: rgb(255 255 255 / 96%);
   border-radius: 12px;
   padding: 20px;
   color: #333;
-  box-shadow: 0 8px 20px rgb(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 15%);
 }
 
 .recipe-card h3 {
