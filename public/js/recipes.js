@@ -218,7 +218,6 @@
     }
 
     async function deleteRecipe(id) {
-      console.log("Deleting recipe id:", id);
       if (!confirm("Are you sure you want to delete this recipe?")) return;
 
       try {
