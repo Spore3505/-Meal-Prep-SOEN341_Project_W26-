@@ -48,13 +48,11 @@ header h1 {
   height: 120px;
   margin: 0 auto;
 
- /* stylelint-disable-next-line declaration-empty-line-before */
- background-image: url('/images/logo.png');
+  background-image: url('/images/logo.png');
   background-size: 100px 100px;
   background-repeat: no-repeat;
   background-position: left center;
 
-  /* stylelint-disable-next-line declaration-empty-line-before */
   padding-left: 70px;
   font-family: Georgia, serif;
   font-size: 52px;
@@ -64,4 +62,26 @@ header h1 {
   text-shadow: 2px 2px 4px rgb(0,0,0,0.5);
   text-align: center;
   line-height: 120px;
+}
+
+/* ===== ADD THIS ONLY ===== */
+.creators {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.creators img {
+  width: 300px;
+  max-width: 80%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.creators-text {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  font-family: Georgia, serif;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
