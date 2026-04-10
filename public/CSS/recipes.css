@@ -149,6 +149,7 @@ h2 {
   grid-auto-flow: column;
   grid-auto-columns: minmax(280px, 320px);
   gap: 14px;
+  /* stylelint-disable-next-line */
   overflow-x: auto;
   overflow-y: hidden;
   padding: 6px 6px 14px;
@@ -266,7 +267,7 @@ ul {
   right: 6px;
 }
 
-@media (max-width: 520px) {
+@media (width <= 520px) {
   .arrowBtn {
     display: none;
   }
