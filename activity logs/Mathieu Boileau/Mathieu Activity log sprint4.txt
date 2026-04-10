@@ -1,0 +1,6 @@
+Reorganize files, make changes to code to support the pathing changes (3 hours)
+writing tests for weekly meal planner  (2 hours)
+
+Mathieu Boileau  
+40257130
+Sprint 4
