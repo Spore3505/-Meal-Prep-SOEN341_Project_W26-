@@ -190,7 +190,7 @@
 
     async function loadAll() {
       try {
-        const res = await fetch("/recipes/all");
+        const res = await fetch("/recipes/all", { credentials: "include" });
         if (!res.ok) throw new Error("Failed to load recipes");
 
         const data = await res.json();
