@@ -39,6 +39,7 @@ function clearMsg() {
 
 async function loadRecipes() {
   const res = await fetch("/recipes/all");
+  if (!res.ok) throw new Error("Failed to load recipes");
   const data = await res.json();
   myRecipes = data.mine || [];
 }
