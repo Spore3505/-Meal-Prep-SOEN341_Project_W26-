@@ -1,0 +1,23 @@
+Sprint Personal Activity Log
+Name: Yalan Luo
+Sprint 4
+
+Apr 7, 2026
+- Configured ESLint and Stylelint for the project
+
+Time Spent
+- ESLint & Stylelint setup: 3 hours
+
+Apr 8, 2026
+- Implemented Git hooks for pre-commit checks
+
+Time Spent
+- Git hooks: 5 hours
+
+Apr 9, 2026
+- Set up Git CI pipeline for automated linting and checks
+
+Time Spent
+- Git CI: 5 hours
+
+Total Time Spent Sprint 4: 13 hours
