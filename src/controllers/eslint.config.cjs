@@ -4,7 +4,6 @@ const js = require("@eslint/js");
 const globals = require("globals");
 
 module.exports = defineConfig([
-  // 默认规则，所有 JS 文件
   {
     files: ["**/*.js"],
     languageOptions: {
@@ -32,7 +31,7 @@ module.exports = defineConfig([
   {
     files: ["public/js/recipes.js"],
     rules: {
-      "no-useless-assignment": "off", // 关闭未使用变量报错
+      "no-useless-assignment": "off",
     },
   },
 ]);
