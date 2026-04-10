@@ -1109,10 +1109,10 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("Username already exists");
     }
 
-    const password_hash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     const ins = await run(
       `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
-      [username, password_hash]
+      [username, passwordHash]
     );
     const userId = ins.lastID;
 
