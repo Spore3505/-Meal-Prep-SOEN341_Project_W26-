@@ -186,7 +186,7 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
 });
 async function loadMealPlan() {
   try {
-    const res = await fetch("/plan");
+    const res = await fetch("/plan", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to load meal plan");
     const data = await res.json();
 
