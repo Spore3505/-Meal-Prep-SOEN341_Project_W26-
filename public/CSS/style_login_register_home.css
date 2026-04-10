@@ -31,7 +31,7 @@ nav a:hover {
 
 section {
   background-color: #ffffff0a;
-  color: #333333;
+  color: #333;
 }
 
 form button {
@@ -48,18 +48,20 @@ header h1 {
   height: 120px;
   margin: 0 auto;
 
+ /* stylelint-disable-next-line declaration-empty-line-before */
  background-image: url('/images/logo.png');
   background-size: 100px 100px;
   background-repeat: no-repeat;
   background-position: left center;
 
+  /* stylelint-disable-next-line declaration-empty-line-before */
   padding-left: 70px;
-  font-family: 'Georgia', serif;
+  font-family: Georgia, serif;
   font-size: 52px;
   font-weight: bold;
-  color: #ffffff;
+  color: #fff;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 2px 2px 4px rgb(0,0,0,0.5);
   text-align: center;
   line-height: 120px;
 }
