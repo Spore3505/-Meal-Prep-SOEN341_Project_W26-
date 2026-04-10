@@ -7,8 +7,10 @@ module.exports = {
     "no-descending-specificity": null,
     "selector-id-pattern": null,
     "keyframes-name-pattern":null,
-    "media-feature-range-notation": null
-  },
+    "media-feature-range-notation": null,
+    "declaration-block-no-redundant-longhand-propeties": null
+  }
+    
   ignoreFiles: [
     "node_modules/**",
     "public/images/**"
