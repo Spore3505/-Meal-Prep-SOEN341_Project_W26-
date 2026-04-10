@@ -1,4 +1,3 @@
-# .github/workflows/lint.yml
 name: Lint CI
 
 on:
@@ -7,6 +6,8 @@ on:
     paths:
       - "public/**/*.js"
       - "src/**/*.js"
+      - "public/**/*.css"
+      - ".github/workflows/**"
       - "eslint.config.*"
       - "stylelint.config.*"
       - "package.json"
@@ -17,23 +18,31 @@ on:
     paths:
       - "public/**/*.js"
       - "src/**/*.js"
+      - "public/**/*.css"
+      - ".github/workflows/**"
       - "eslint.config.*"
       - "stylelint.config.*"
       - "package.json"
       - "package-lock.json"
+
+  workflow_dispatch: {}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npm run lint
+      - name: Run lint
+        run: npm run lint
