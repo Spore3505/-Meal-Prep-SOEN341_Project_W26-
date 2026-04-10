@@ -34,7 +34,7 @@ header h1 {
   font-weight: bold;
   color: #fff;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,.5);
+  text-shadow: 2px 2px 4px rgb(0,0,0,.5);
   text-align: center;
   line-height: 120px;
 }
@@ -70,7 +70,7 @@ nav button:disabled {
 
 header hr {
   border: 0;
-  border-top: 1px solid rgba(255,255,255,.35);
+  border-top: 1px solid rgb(255,255,255,.35);
   margin: 12px auto 0;
   width: min(900px,92%);
 }
@@ -92,16 +92,16 @@ main p {
   width: min(520px,92vw);
   background-color: #ffffff0a;
   backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,.22);
+  border: 1px solid rgb(255,255,255,.22);
   border-radius: 14px;
   padding: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.18);
+  box-shadow: 0 10px 25px rgb(0,0,0,.18);
 }
 
 .section {
   margin-top: 18px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,.18);
+  border-top: 1px solid rgb(255,255,255,.18);
 }
 
 .section:first-child {
@@ -126,10 +126,10 @@ main p {
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  border: 1px solid rgba(255,255,255,.28);
+  border: 1px solid rgb(255,255,255,.28);
   border-radius: 999px;
   font-size: 14px;
-  background: rgba(255,255,255,.12);
+  background: rgb(255,255,255,.12);
 }
 
 .tag button {
@@ -154,8 +154,8 @@ main p {
   flex: 1;
   padding: 9px 10px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.28);
-  background: rgba(255,255,255,.12);
+  border: 1px solid rgb(255,255,255,.28);
+  background: rgb(255,255,255,.12);
   outline: none;
 }
 
