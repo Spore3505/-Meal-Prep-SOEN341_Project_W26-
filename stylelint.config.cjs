@@ -1,4 +1,3 @@
-// stylelint.config.cjs
 module.exports = {
   extends: "stylelint-config-standard",
   rules: {
