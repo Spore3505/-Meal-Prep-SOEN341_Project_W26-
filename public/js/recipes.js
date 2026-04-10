@@ -1,4 +1,3 @@
-       console.log("JS CONNECTED");
     let allMine = [];
     let allGlobal = [];
     const filters = {};
