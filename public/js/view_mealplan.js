@@ -194,7 +194,7 @@ async function loadMealPlan() {
     const allRecipes = [...allMine, ...allGlobal];
 
     data.meals.forEach(m => {
-      const recipe = allRecipes.find(r => r.id == m.recipe_id);
+      const recipe = allRecipes.find(r => r.id === m.recipe_id);
       if (recipe) {
         if (!plan[m.day]) plan[m.day] = {};
         plan[m.day][m.meal] = recipe;
