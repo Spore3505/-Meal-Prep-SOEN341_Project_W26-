@@ -1,4 +1,3 @@
-// eslint.config.cjs
 const { defineConfig } = require("eslint/config");
 const js = require("@eslint/js");
 const globals = require("globals");
@@ -26,8 +25,6 @@ module.exports = defineConfig([
       "curly": "off",
     },
   },
-
-  // 仅针对 account.js
   {
     files: ["public/js/recipes.js"],
     rules: {
