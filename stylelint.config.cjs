@@ -10,6 +10,6 @@ module.exports = {
   },
   ignoreFiles: [
     "node_modules/**",
-    "public/image/**"
+    "public/images/**"
   ]
 };
