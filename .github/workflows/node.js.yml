@@ -39,8 +39,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-     - name: Run lint-staged
-        run: npx lint-staged
-
       - name: Run tests
         run: npm test
