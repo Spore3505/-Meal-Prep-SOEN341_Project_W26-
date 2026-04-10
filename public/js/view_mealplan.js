@@ -11,9 +11,10 @@ let selectedMeal = null;
 async function loadRecipes() {
   try {
     const res = await fetch("/recipes/all");
+    if (!res.ok) throw new Error("Failed to load recipes");
     const data = await res.json();
-    allMine = data.mine;
-    allGlobal = data.global;
+    allMine = data.mine || [];
+    allGlobal = data.global || [];
   } catch (err) {
     console.error("Failed to load recipes:", err);
   }
