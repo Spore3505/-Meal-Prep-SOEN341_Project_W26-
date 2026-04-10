@@ -76,8 +76,8 @@ async function requestGeneratedRecipe() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       answers,
-      excludeTitles: [...seenTitles],
-    }),
+      excludeTitles: [...seenTitles]
+    })
   });
 
   if (!res.ok) {
@@ -223,8 +223,8 @@ async function saveRecipe() {
         cost: currentRecipe.cost || 0,
         ingredients: currentRecipe.ingredients || [],
         steps: currentRecipe.steps || [],
-        dietaryTags: currentRecipe.dietaryTags || [],
-      }),
+        dietaryTags: currentRecipe.dietaryTags || []
+      })
     });
 
     if (!res.ok) throw new Error("Server error");
