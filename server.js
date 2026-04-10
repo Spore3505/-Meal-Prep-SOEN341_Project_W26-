@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(
   session({
     name: "mealmj_sid",
-    secret: "CHANGE_THIS_SECRET",
+    secret: process.env.SESSION_SECRET || "CHANGE_THIS_SECRET",
     resave: false,
     saveUninitialized: false,
     cookie: {
