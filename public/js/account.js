@@ -144,6 +144,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     const res = await fetch("/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ allergies, preferences })
     });
 
