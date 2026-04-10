@@ -146,6 +146,7 @@ function renderRecipeList(list) {
         const response = await fetch("/plan/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             day: selectedDay,
             meal: selectedMeal,
