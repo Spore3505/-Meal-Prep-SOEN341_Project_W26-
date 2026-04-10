@@ -1190,8 +1190,13 @@ app.post("/logout", (req, res) => {
 
 app.delete("/recipes/:id", requireAuth, async (req, res) => {
   const id = req.params.id;
+  const userId = req.session.user.id;
 
   try {
+    const recipe = await get(`SELECT owner_user_id FROM recipes WHERE id = ?`, [id]);
+    if (!recipe) return res.status(404).json({ error: "Recipe not found" });
+    if (recipe.owner_user_id !== userId) return res.status(403).json({ error: "Not authorized" });
+
     await run(`DELETE FROM recipe_ingredients WHERE recipe_id = ?`, [id]);
     await run(`DELETE FROM recipe_steps WHERE recipe_id = ?`, [id]);
     await run(`DELETE FROM recipe_tags WHERE recipe_id = ?`, [id]);
