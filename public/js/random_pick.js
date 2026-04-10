@@ -217,6 +217,7 @@ async function saveRecipe() {
     const res = await fetch("/recipes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         title: currentRecipe.title,
         description: currentRecipe.description || "",
