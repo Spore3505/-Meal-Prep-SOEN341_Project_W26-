@@ -1,4 +1,4 @@
-    console.log("JS CONNECTED");
+       console.log("JS CONNECTED");
     let allMine = [];
     let allGlobal = [];
     const filters = {};
@@ -36,21 +36,21 @@
           ${
             dietaryTags.length
               ? `<ul>${dietaryTags.map(tag => `<li>${esc(tag)}</li>`).join("")}</ul>`
-              : `<div class="meta">No dietary tags listed.</div>`
+              : "<div class=\"meta\">No dietary tags listed.</div>"
           }
 
           <div class="listTitle">Ingredients</div>
           ${
             ingredients.length
               ? `<ul>${ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`
-              : `<div class="meta">No ingredients listed.</div>`
+              : "<div class=\"meta\">No ingredients listed.</div>"
           }
 
           <div class="listTitle">Steps</div>
           ${
             steps.length
               ? `<ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul>`
-              : `<div class="meta">No steps listed.</div>`
+              : "<div class=\"meta\">No steps listed.</div>"
           }
 
           <div style="margin-top:12px; display:flex; gap:8px;">
@@ -65,7 +65,7 @@
       const el = document.getElementById(containerId);
 
       if (!recipes || !recipes.length) {
-        el.innerHTML = `<div class="empty">No recipes found.</div>`;
+        el.innerHTML = "<div class=\"empty\">No recipes found.</div>";
         return;
       }
 
