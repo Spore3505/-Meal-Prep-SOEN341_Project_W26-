@@ -154,8 +154,6 @@ function renderRecipeList(list) {
 
         if (!response.ok) throw new Error("Server failed to save");
 
-        console.log("Saving meal:", { day: selectedDay, meal: selectedMeal, recipeId: r.id });
-
         // 3. Update UI and close modal
         renderPlanner();
         closeModal();
