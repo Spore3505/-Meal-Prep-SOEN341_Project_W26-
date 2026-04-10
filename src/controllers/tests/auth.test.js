@@ -11,6 +11,7 @@ beforeEach(async () => {
   await run("DELETE FROM user_preferences");
   await run("DELETE FROM recipe_steps");
   await run("DELETE FROM recipe_ingredients");
+  await run("DELETE FROM recipe_tags");
   await run("DELETE FROM recipes");
   await run("DELETE FROM users");
 });
