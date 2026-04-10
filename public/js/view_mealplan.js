@@ -193,7 +193,7 @@ async function loadMealPlan() {
     // Map recipe IDs to actual recipe objects from allMine + allGlobal
     const allRecipes = [...allMine, ...allGlobal];
 
-    data.meals.forEach(m => {
+    (data.meals || []).forEach(m => {
       const recipe = allRecipes.find(r => r.id === m.recipe_id);
       if (recipe) {
         if (!plan[m.day]) plan[m.day] = {};
