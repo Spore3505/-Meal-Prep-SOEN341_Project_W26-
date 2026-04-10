@@ -93,7 +93,7 @@ document.getElementById("otherPrefInput").addEventListener("keydown", (e) => {
 
 (async function loadProfile() {
   try {
-    const res = await fetch("/profile");
+    const res = await fetch("/profile", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to load profile");
     const data = await res.json();
 
