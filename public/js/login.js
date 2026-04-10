@@ -3,7 +3,7 @@
   // =========================
   (async function () {
     try {
-      const res = await fetch("/me");
+      const res = await fetch("/me", { credentials: "include" });
       const data = await res.json();
 
       const authLink = document.getElementById("authLink");
