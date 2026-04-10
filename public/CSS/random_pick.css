@@ -35,7 +35,7 @@ header h1 {
   font-size: 52px;
   font-weight: bold;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgb(0, 0, 0, 0.5);
   line-height: 120px;
 }
 
@@ -70,7 +70,7 @@ nav button:disabled {
 
 header hr {
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-top: 1px solid rgb(255, 255, 255, 0.35);
   margin: 12px auto 0;
   width: min(900px, 92%);
 }
@@ -83,16 +83,16 @@ main {
 
 .page-title {
   color: #fff;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 3px rgb(0, 0, 0, 0.5);
   margin-bottom: 4px;
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgb(255, 255, 255, 0.85);
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 15px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.35);
 }
 
 .box {
@@ -102,10 +102,10 @@ main {
   width: min(720px, 92vw);
   background-color: #ffffff0a;
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgb(255, 255, 255, 0.22);
   border-radius: 14px;
   padding: 28px 28px 22px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 10px 25px rgb(0, 0, 0, 0.18);
 }
 
 .question-block {
@@ -116,7 +116,7 @@ main {
   font-weight: bold;
   margin-bottom: 10px;
   color: #fff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
 }
 
 .options {
@@ -127,9 +127,9 @@ main {
 
 .option-btn {
   padding: 8px 16px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid rgb(255, 255, 255, 0.35);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(255, 255, 255, 0.12);
   color: #fff;
   cursor: pointer;
   font-size: 14px;
@@ -139,7 +139,7 @@ main {
 
 .option-btn:hover {
   border-color: #e7b262;
-  background: rgba(231, 178, 98, 0.25);
+  background: rgb(231, 178, 98, 0.25);
 }
 
 .option-btn.selected {
@@ -172,13 +172,13 @@ main {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgb(255, 255, 255, 0.18);
+  border: 1px solid rgb(255, 255, 255, 0.35);
   color: #fff;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgb(255, 255, 255, 0.28);
 }
 
 .btn-row {
@@ -200,23 +200,23 @@ main {
 
 .msg-ok {
   color: #9cffab;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
 }
 
 .msg-err {
   color: #ffb0b0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
 }
 
 .msg-info {
   color: #fff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgb(0, 0, 0, 0.4);
 }
 
 #seenNote,
 #resultSeenNote {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgb(255, 255, 255, 0.72);
   margin-top: 6px;
   text-align: center;
 }
@@ -226,11 +226,11 @@ main {
 }
 
 .recipe-card {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgb(255, 255, 255, 0.96);
   border-radius: 12px;
   padding: 20px;
   color: #333;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgb(0, 0, 0, 0.15);
 }
 
 .recipe-card h3 {
@@ -276,7 +276,7 @@ main {
   margin-top: 18px;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
   .options {
     flex-direction: column;
   }
