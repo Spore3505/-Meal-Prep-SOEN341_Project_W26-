@@ -6,24 +6,23 @@ on:
     paths:
       - "public/**"
       - "src/**"
+      - "server.js"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/**"
   pull_request:
     branches: ["main"]
     paths:
       - "public/**"
       - "src/**"
+      - "server.js"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: src/controllers
-
-    env:
-      NODE_PATH: ${{ github.workspace }}/src/controllers/node_modules
 
     steps:
       - name: Checkout
@@ -34,7 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: src/controllers/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm install
