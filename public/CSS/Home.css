@@ -1,13 +1,7 @@
-header {
-     text-align: center;
-     }
+header { text-align: center; }
 
-nav ul { 
-    list-style: none; 
-    padding: 0;
- }
+nav ul { list-style: none;
+     padding: 0; }
 
-nav li { 
-    display: inline; 
-    margin: 0 10px; 
-}
+nav li { display: inline; 
+    margin: 0 10px; }

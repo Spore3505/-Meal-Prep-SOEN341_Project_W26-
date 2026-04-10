@@ -47,10 +47,14 @@ header h1 {
   width: 400px;
   height: 120px;
   margin: 0 auto;
+
+ /* stylelint-disable-next-line declaration-empty-line-before */
  background-image: url('/images/logo.png');
   background-size: 100px 100px;
   background-repeat: no-repeat;
   background-position: left center;
+
+  /* stylelint-disable-next-line declaration-empty-line-before */
   padding-left: 70px;
   font-family: Georgia, serif;
   font-size: 52px;

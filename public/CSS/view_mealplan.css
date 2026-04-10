@@ -117,7 +117,7 @@
     cursor: pointer;
     width: 100%;
   }
-
+  
   .modal {
     display: none;
     position: fixed;
