@@ -6,7 +6,8 @@ module.exports = {
     "selector-class-pattern": null,
     "no-descending-specificity": null,
     "selector-id-pattern": null,
-    "keyframes-name-pattern":null
+    "keyframes-name-pattern":null,
+    "media-feature-range-notation": null
   },
   ignoreFiles: [
     "node_modules/**",
