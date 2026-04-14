@@ -1,0 +1,20 @@
+# Meal Prep_Sprint3_meeting1_meeting_2026-02-13
+Date: 2026-03-13
+
+Attendees:
+- Christopher Dunn (40285514)
+- Yalan Luo (40275103)
+- Mathieu Boileau (40257130)
+
+Meeting Goals / Objectives:
+- Finalize Sprint3 plan
+- Discuss implementation of unique functionality
+- Prepare the backlog for Sprint 3
+
+Discussion Notes:
+Reviewed potential tasks and priorities for Sprint 3
+Discussed the “unique” feature and possible approaches
+No final conclusion reached on how to implement the unique functionality
+
+Action Items:
+ALL: Continue refining Sprint 3 plan,Research approaches for unique functionality and prepare proposals for next meeting
