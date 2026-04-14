@@ -1,52 +1,34 @@
 const path = require("path");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
-
-// Path to SQLite database file
 const DB_PATH = path.join(__dirname, "../models/mealmajor.db");
-
-// Create database connection
 const db = new sqlite3.Database(DB_PATH);
 
-// ------------------------
-// Promise helper functions
-// ------------------------
-
-// Run INSERT, UPDATE, DELETE queries
+// Promise helpers
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) reject(err);
-      else resolve(this); // gives access to lastID, changes, etc.
+      else resolve(this);
     });
   });
 }
 
-// Run SELECT query for a single row
 function get(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => (err ? reject(err) : resolve(row)));
   });
 }
 
-// Run SELECT query for multiple rows
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)));
   });
 }
 
-// ------------------------
-// Database initialization
-// ------------------------
-
 async function initDb() {
-  // Enable foreign key constraints
   await run("PRAGMA foreign_keys = ON");
 
-  // ------------------------
-  // Users table
-  // ------------------------
   await run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,7 +38,6 @@ async function initDb() {
     )
   `);
 
-  // Stores allergies per user
   await run(`
     CREATE TABLE IF NOT EXISTS user_allergies (
       user_id INTEGER NOT NULL,
@@ -66,7 +47,6 @@ async function initDb() {
     )
   `);
 
-  // Stores food preferences per user
   await run(`
     CREATE TABLE IF NOT EXISTS user_preferences (
       user_id INTEGER NOT NULL,
@@ -76,25 +56,21 @@ async function initDb() {
     )
   `);
 
-  // ------------------------
-  // Recipes table
-  // ------------------------
   await run(`
     CREATE TABLE IF NOT EXISTS recipes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      owner_user_id INTEGER, // null = global recipe
+      owner_user_id INTEGER,
       title TEXT NOT NULL,
       description TEXT,
       prep_time INTEGER NOT NULL DEFAULT 0,
       cook_time INTEGER NOT NULL DEFAULT 0,
       cost REAL NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      is_global INTEGER NOT NULL DEFAULT 0, // 1 = global recipe
+      is_global INTEGER NOT NULL DEFAULT 0,
       FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
 
-  // Ingredients for each recipe
   await run(`
     CREATE TABLE IF NOT EXISTS recipe_ingredients (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,7 +80,6 @@ async function initDb() {
     )
   `);
 
-  // Steps for each recipe (ordered by step_index)
   await run(`
     CREATE TABLE IF NOT EXISTS recipe_steps (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,7 +90,6 @@ async function initDb() {
     )
   `);
 
-  // Dietary tags (e.g., vegetarian, vegan, high-protein)
   await run(`
     CREATE TABLE IF NOT EXISTS recipe_tags (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -125,7 +99,6 @@ async function initDb() {
     )
   `);
 
-  // Meal planner (links user + day + meal to a recipe)
   await run(`
     CREATE TABLE IF NOT EXISTS meal_plans (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -133,29 +106,21 @@ async function initDb() {
       day TEXT NOT NULL,
       meal TEXT NOT NULL,
       recipe_id INTEGER NOT NULL,
-      UNIQUE(user_id, day, meal), // prevents duplicates
+      UNIQUE(user_id, day, meal),
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
     )
   `);
 
-  // ------------------------
-  // Indexes (for performance)
-  // ------------------------
   await run(`CREATE INDEX IF NOT EXISTS idx_recipes_owner ON recipes(owner_user_id)`);
   await run(`CREATE INDEX IF NOT EXISTS idx_recipes_global ON recipes(is_global)`);
   await run(`CREATE INDEX IF NOT EXISTS idx_recipes_title ON recipes(title)`);
 
-  // ------------------------
-  // Seed global recipes (only if none exist)
-  // ------------------------
-  const countRow = await get(`SELECT COUNT(*) AS c FROM recipes WHERE is_global`);
+  const countRow = await get(`SELECT COUNT(*) AS c FROM recipes WHERE is_global     `);
   if ((countRow?.c || 0) === 0) {
     const globalPath = path.join(__dirname, "..", "..", "global_recipes.json");
 
     let seed = null;
-
-    // Try loading recipes from JSON file
     if (fs.existsSync(globalPath)) {
       try {
         const raw = fs.readFileSync(globalPath, "utf8");
@@ -166,7 +131,6 @@ async function initDb() {
       }
     }
 
-    // Fallback default recipes
     if (!seed) {
       seed = [
         {
@@ -192,7 +156,6 @@ async function initDb() {
       ];
     }
 
-    // Insert seed recipes into DB
     for (const r of seed) {
       const title = String(r.title || "").trim();
       if (!title) continue;
@@ -215,7 +178,6 @@ async function initDb() {
       const steps = Array.isArray(r.steps) ? r.steps.map(String) : [];
       const tags = Array.isArray(r.dietaryTags) ? r.dietaryTags.map(String) : [];
 
-      // Insert ingredients
       for (const ing of ingredients) {
         const clean = String(ing).trim();
         if (clean) {
@@ -226,7 +188,6 @@ async function initDb() {
         }
       }
 
-      // Insert steps (ordered)
       for (let i = 0; i < steps.length; i++) {
         const st = String(steps[i]).trim();
         if (st) {
@@ -237,7 +198,6 @@ async function initDb() {
         }
       }
 
-      // Insert dietary tags
       for (const t of tags) {
         const clean = String(t).trim();
         if (clean) {
@@ -251,7 +211,6 @@ async function initDb() {
   }
 }
 
-// Export DB functions
 module.exports = {
   db,
   run,
