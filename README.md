@@ -11,7 +11,7 @@ Yalan Luo (40275103)- CSS and backend programming
 
 Mathieu Boileau (40257130) Role: Frontend‑focused developer (with some backend contribution).
 
-Ali Kotb (40217082)
+Ali Kotb (40217082) : FrontEnd / Product Owner
 
 Problems:
 -students need a platform to be able to create recipes and simplify meal planning. 
