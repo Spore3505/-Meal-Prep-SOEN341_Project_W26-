@@ -1,7 +1,6 @@
 const request = require("supertest");
-const app = require("../../../server");
-const { initDb, run } = require("../../models/db");
-
+const app = require("../server");
+const { initDb, run } = require("../db");
 beforeAll(async () => {
   await initDb();
 });
