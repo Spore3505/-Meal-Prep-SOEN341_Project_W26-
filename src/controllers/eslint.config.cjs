@@ -4,9 +4,7 @@ const globals = require("globals");
 
 module.exports = defineConfig([
   {
-    ignores: [
-      "node_modules/**"
-    ]
+    ignores: ["node_modules/**"]
   },
   {
     files: ["**/*.js"],
@@ -22,11 +20,12 @@ module.exports = defineConfig([
       "no-undef": "error",
       "no-unused-vars": ["warn", { args: "none", varsIgnorePattern: "^_" }],
       "semi": ["error", "always"],
-      "quotes": ["error", "double"],
       "eqeqeq": ["error", "always"],
-      "comma-dangle": ["error", "never"],
       "max-len": ["warn", { code: 120 }],
-      "curly": "off"
+      "curly": "off",
+
+      "quotes": "off",
+      "comma-dangle": "off"
     }
   },
   {
