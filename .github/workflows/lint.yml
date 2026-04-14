@@ -9,8 +9,8 @@ on:
       - ".github/workflows/**"
       - "eslint.config.*"
       - "stylelint.config.*"
-      - "package.json"
-      - "package-lock.json"
+      - "src/controllers/package.json"
+      - "src/controllers/package-lock.json"
 
   pull_request:
     branches: ["main"]
@@ -20,14 +20,18 @@ on:
       - ".github/workflows/**"
       - "eslint.config.*"
       - "stylelint.config.*"
-      - "package.json"
-      - "package-lock.json"
+      - "src/controllers/package.json"
+      - "src/controllers/package-lock.json"
 
   workflow_dispatch: {}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/controllers   # 👈 CRITICAL FIX
 
     steps:
       - name: Checkout repository
@@ -38,6 +42,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: src/controllers/package-lock.json  # 👈 FIX
 
       - name: Install dependencies
         run: npm install
