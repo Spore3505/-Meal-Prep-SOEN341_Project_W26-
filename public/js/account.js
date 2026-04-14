@@ -42,7 +42,6 @@ function renderTags(containerId, setRef) {
     pill.textContent = label;
 
     const x = document.createElement("button");
-    cont y= "jest":
     x.type = "button";
     x.innerHTML = "✕";
     x.title = "Remove";
