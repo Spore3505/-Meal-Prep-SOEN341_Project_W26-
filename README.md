@@ -18,4 +18,4 @@ Problems:
 
 Solution:
 
-MealMajor is a web app for students to plan meals, track groceries, and propose easy recipes which is shareable with your friends and family
+MealMajor is a web app designed for students to simplify meal planning. It allows users to create and save their own recipes, build weekly meal plans, and generate AI-powered recipe recommendations when they need inspiration.
