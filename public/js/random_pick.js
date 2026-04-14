@@ -1,8 +1,17 @@
+// Stores user's own recipes (fetched from backend)
 let myRecipes = [];
+
+// Stores answers from the 5 quiz questions
 let answers = {};
+
+// Currently displayed recipe
 let currentRecipe = null;
+
+// Keeps track of already generated recipes to avoid duplicates
 let seenTitles = new Set();
 
+
+// Escape HTML to prevent injection issues when rendering
 function esc(s) {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -10,24 +19,30 @@ function esc(s) {
     .replace(/>/g, "&gt;");
 }
 
+
+// Get the correct message element depending on which screen is visible
 function getMsgEl() {
   return document.getElementById("recipeResult").style.display === "block"
     ? document.getElementById("resultMsg")
     : document.getElementById("msg");
 }
 
+// Get element showing how many recipes were generated
 function getSeenEl() {
   return document.getElementById("recipeResult").style.display === "block"
     ? document.getElementById("resultSeenNote")
     : document.getElementById("seenNote");
 }
 
+
+// Show a message (info, error, success)
 function showMsg(text, type = "info") {
   const el = getMsgEl();
   el.className = "msg-" + type;
   el.textContent = text;
 }
 
+// Clear all messages
 function clearMsg() {
   const msg1 = document.getElementById("msg");
   const msg2 = document.getElementById("resultMsg");
@@ -37,6 +52,8 @@ function clearMsg() {
   msg2.textContent = "";
 }
 
+
+// Load user's saved recipes from backend
 async function loadRecipes() {
   const res = await fetch("/recipes/all", { credentials: "include" });
   if (!res.ok) throw new Error("Failed to load recipes");
@@ -44,33 +61,50 @@ async function loadRecipes() {
   myRecipes = data.mine || [];
 }
 
+
+// Handles selecting an answer button
 function select(btn) {
   const group = btn.closest(".options");
+
+  // Remove selection from other buttons in the same group
   group.querySelectorAll(".option-btn").forEach((b) => b.classList.remove("selected"));
+
+  // Mark this button as selected
   btn.classList.add("selected");
 
+  // Store answer
   const q = group.dataset.q;
   answers[q] = btn.dataset.value;
 }
 
+
+// Reset quiz to initial state
 function resetQuiz() {
   answers = {};
   currentRecipe = null;
   seenTitles.clear();
+
   document.querySelectorAll(".option-btn").forEach((b) => b.classList.remove("selected"));
+
   document.getElementById("recipeResult").style.display = "none";
   document.getElementById("quiz").style.display = "block";
+
   document.getElementById("seenNote").textContent = "";
   document.getElementById("resultSeenNote").textContent = "";
+
   clearMsg();
 }
 
+
+// Go back from result screen to quiz
 function backToQuiz() {
   document.getElementById("recipeResult").style.display = "none";
   document.getElementById("quiz").style.display = "block";
   clearMsg();
 }
 
+
+// Request a generated recipe from backend
 async function requestGeneratedRecipe() {
   const res = await fetch("/recipes/generate", {
     method: "POST",
@@ -78,7 +112,7 @@ async function requestGeneratedRecipe() {
     credentials: "include",
     body: JSON.stringify({
       answers,
-      excludeTitles: [...seenTitles]
+      excludeTitles: [...seenTitles] // avoid duplicates
     })
   });
 
@@ -90,9 +124,12 @@ async function requestGeneratedRecipe() {
   return data.recipe;
 }
 
+
+// Main function when user clicks "Find Recipe"
 async function findRecipe() {
   clearMsg();
 
+  // Ensure all 5 questions are answered
   const required = ["time", "type", "spicy", "cost", "dietary"];
   const missing = required.filter((q) => !answers[q]);
 
@@ -106,39 +143,51 @@ async function findRecipe() {
   try {
     await loadRecipes();
 
+    // Show loading message
     document.getElementById("quiz").style.display = "block";
     document.getElementById("recipeResult").style.display = "none";
     showMsg("Generating a brand-new recipe...", "info");
 
     const recipe = await requestGeneratedRecipe();
+
     currentRecipe = recipe;
+
+    // Add to seen set to prevent repeats
     seenTitles.add(String(recipe.title).trim().toLowerCase());
 
+    // Render recipe UI
     renderRecipeCard(recipe);
 
+    // Switch to result screen
     document.getElementById("quiz").style.display = "none";
     document.getElementById("recipeResult").style.display = "block";
+
+    // Update count of generated recipes
     document.getElementById("resultSeenNote").textContent =
       `Generated ${seenTitles.size} unique recipe(s) for these answers this session.`;
 
     clearMsg();
   } catch (err) {
     console.error(err);
-    document.getElementById("quiz").style.display = "block";
-    document.getElementById("recipeResult").style.display = "none";
     showMsg("Could not generate a recipe. Please try again.", "err");
   }
 }
 
+
+// Render recipe card UI
 function renderRecipeCard(r) {
   const tags = r.dietaryTags || [];
+
+  // Total time = prep + cook
   const totalTime = (r.prepTime || 0) + (r.cookTime || 0);
 
+  // Check if recipe already exists in user's collection
   const alreadyMine = myRecipes.some(
     (m) => m.title.trim().toLowerCase() === r.title.trim().toLowerCase()
   );
 
   const saveBtn = document.getElementById("saveBtn");
+
   if (alreadyMine) {
     saveBtn.textContent = "✅ Already in My Collection";
     saveBtn.disabled = true;
@@ -147,6 +196,7 @@ function renderRecipeCard(r) {
     saveBtn.disabled = false;
   }
 
+  // Inject HTML into recipe card
   document.getElementById("recipeCard").innerHTML = `
     <h3>${esc(r.title)}</h3>
     <p style="color:#555; margin:0 0 10px;">${esc(r.description || "")}</p>
@@ -173,6 +223,8 @@ function renderRecipeCard(r) {
   `;
 }
 
+
+// Generate another recipe with same answers
 async function tryAnother() {
   if (!answers.time || !answers.type || !answers.spicy || !answers.cost || !answers.dietary) {
     showMsg("Answer all 5 questions first.", "err");
@@ -184,10 +236,12 @@ async function tryAnother() {
     showMsg("Generating another new recipe...", "info");
 
     const recipe = await requestGeneratedRecipe();
+
     currentRecipe = recipe;
     seenTitles.add(String(recipe.title).trim().toLowerCase());
 
     renderRecipeCard(recipe);
+
     document.getElementById("resultSeenNote").textContent =
       `Generated ${seenTitles.size} unique recipe(s) for these answers this session.`;
 
@@ -198,10 +252,14 @@ async function tryAnother() {
   }
 }
 
+
+// Save generated recipe to database
 async function saveRecipe() {
   if (!currentRecipe) return;
+
   clearMsg();
 
+  // Check for duplicates before saving
   const isDuplicate = myRecipes.some(
     (r) => r.title.trim().toLowerCase() === currentRecipe.title.trim().toLowerCase()
   );
@@ -233,9 +291,11 @@ async function saveRecipe() {
     if (!res.ok) throw new Error("Server error");
 
     showMsg("✅ Recipe saved to your collection!", "ok");
+
     document.getElementById("saveBtn").textContent = "✅ Saved!";
     document.getElementById("saveBtn").disabled = true;
 
+    // Update local cache
     myRecipes.push(currentRecipe);
   } catch (err) {
     console.error(err);
@@ -243,4 +303,6 @@ async function saveRecipe() {
   }
 }
 
+
+// Load recipes when page loads
 loadRecipes().catch(console.error);
