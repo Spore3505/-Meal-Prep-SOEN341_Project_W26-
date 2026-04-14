@@ -5,26 +5,19 @@ const globals = require("globals");
 module.exports = defineConfig([
   {
     ignores: [
-      "src/**",
-      "server.js"
-    ],
+      "node_modules/**"
+    ]
   },
   {
     files: ["**/*.js"],
+    ...js.configs.recommended,
     languageOptions: {
+      ecmaVersion: 2021,
+      sourceType: "commonjs",
       globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-      parserOptions: {
-        ecmaVersion: 2021,
-        sourceType: "module",
-      },
+        ...globals.node
+      }
     },
-    plugins: {
-      js,
-    },
-    extends: ["js/recommended"],
     rules: {
       "no-undef": "error",
       "no-unused-vars": ["warn", { args: "none", varsIgnorePattern: "^_" }],
@@ -34,12 +27,15 @@ module.exports = defineConfig([
       "comma-dangle": ["error", "never"],
       "max-len": ["warn", { code: 120 }],
       "curly": "off"
-    },
+    }
   },
   {
-    files: ["public/js/recipes.js"],
-    rules: {
-      "no-useless-assignment": "off"
-    },
+    files: ["tests/**/*.js", "**/*.test.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest
+      }
+    }
   }
 ]);
